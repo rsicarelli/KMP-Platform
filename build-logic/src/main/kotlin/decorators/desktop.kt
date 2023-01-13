@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
 fun Project.setupDesktopApp(
+    mainClassName: String,
     dependencyHandler: KotlinDependencyHandler.() -> Unit = {},
 ) {
     extensions.configure<KotlinMultiplatformExtension> {
@@ -25,9 +26,9 @@ fun Project.setupDesktopApp(
 
     compose.configure<DesktopExtension> {
         application {
-            mainClass = "app.dreamlightpal.MainKt"
+            mainClass = mainClassName
             nativeDistributions {
-                packageName = "DreamlightPal"
+                packageName = "TODO: update to configuration dsl"
                 packageVersion = "1.0.0"
                 description = "todo"
                 copyright = "© 2022 rsicarelli. All rights reserved."
@@ -54,7 +55,7 @@ fun Project.setupDesktopApp(
                 }
 
                 macOS {
-                    bundleID = "app.dreamlightpal"
+                    bundleID = "com.rsicarelli"
                     //                    iconFile.set(iconsRoot.resolve("launcher_icons/macos.icns"))
                 }
             }

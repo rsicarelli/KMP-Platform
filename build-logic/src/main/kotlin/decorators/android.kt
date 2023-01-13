@@ -58,7 +58,7 @@ private fun Project.configureAndroidCommon(
     targetSdk: Int = 33,
 ) {
     extensions.configure<BaseExtension> {
-        namespace = "app.dreamlightpal.${project.name}"
+        namespace = "$group.${project.name}"
 
         compileSdkVersion(compileSdk)
 
