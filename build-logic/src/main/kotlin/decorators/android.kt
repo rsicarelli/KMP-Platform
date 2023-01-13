@@ -6,12 +6,16 @@ import com.android.build.api.dsl.CommonExtension
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
+import config.CompilationConfig
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.withGroovyBuilder
 
-internal fun Project.configureAndroidLibrary() {
+internal fun Project.configureAndroidLibrary(
+    enableCompose: Boolean,
+    compilationConfig: CompilationConfig,
+) {
     configureAndroidCommon()
 
     extensions.configure<LibraryExtension> {
@@ -38,6 +42,8 @@ fun Project.configureAndroidApp(
     applicationId: String,
     versionCode: Int,
     versionName: String,
+    compilationConfig: CompilationConfig,
+    enableCompose: Boolean,
 ) {
     configureAndroidCommon()
 

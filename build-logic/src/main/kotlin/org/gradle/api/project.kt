@@ -10,5 +10,13 @@ internal val Project.catalogs
 
 internal val Project.libs: VersionCatalog get() = catalogs.named("libs")
 
+internal fun VersionCatalog.version(reference: String): String? = findVersion(reference)
+    .orElse(null)
+    ?.toString()
+
 internal val Project.compose
     get() = extensions.getByType<ComposeExtension>()
+
+internal fun Project.checkIsRootProject() {
+    check(rootProject == this) { "Must be called on a root project" }
+}

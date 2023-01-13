@@ -9,6 +9,7 @@ dependencies {
     compileOnly(libs.gradlePlugin.kotlin)
     compileOnly(libs.gradlePlugin.android)
     compileOnly(libs.gradlePlugin.compose)
+    compileOnly(libs.gradlePlugin.detekt)
     testCompileOnly(kotlin("test"))
 }
 

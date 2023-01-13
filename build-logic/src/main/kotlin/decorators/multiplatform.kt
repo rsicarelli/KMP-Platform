@@ -2,6 +2,7 @@
 
 package decorators
 
+import config.CompilationConfig
 import org.gradle.api.Project
 import org.gradle.api.compose
 import org.gradle.kotlin.dsl.configure
@@ -13,11 +14,12 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @OptIn(ExperimentalComposeLibrary::class)
-fun Project.setupMultiplatformLibrary(
+internal fun Project.configureMultiplatformLibrary(
     enableCompose: Boolean = false,
-    commonMainDependencies: KotlinDependencyHandler.() -> Unit = { },
-    androidMainDependencies: KotlinDependencyHandler.() -> Unit = { },
-    desktopMainDependencies: KotlinDependencyHandler.() -> Unit = { },
+    compilationConfig: CompilationConfig,
+    commonMainDependencies: KotlinDependencyHandler.() -> Unit,
+    androidMainDependencies: KotlinDependencyHandler.() -> Unit,
+    desktopMainDependencies: KotlinDependencyHandler.() -> Unit,
 ) {
     extensions.configure<KotlinMultiplatformExtension> {
         pluginManager.apply {
@@ -46,7 +48,7 @@ fun Project.setupMultiplatformLibrary(
                 dependencies(androidMainDependencies)
             }
             named("desktopMain") {
-                if(enableCompose) {
+                if (enableCompose) {
                     dependencies {
                         compileOnly(compose.dependencies.desktop.common)
                     }
@@ -73,6 +75,6 @@ fun Project.setupMultiplatformLibrary(
         }
     }
 
-    configureAndroidLibrary()
-    configureTest()
+    configureAndroidLibrary(enableCompose, compilationConfig)
+    configureJUnitTests()
 }
