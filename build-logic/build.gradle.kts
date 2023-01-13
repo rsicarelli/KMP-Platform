@@ -20,3 +20,13 @@ dependencies {
     testCompileOnly(kotlin("test"))
 }
 
+gradlePlugin {
+    isAutomatedPublishing = false
+
+    with(plugins) {
+        register("kpmGradlePlugin") {
+            id = "com.rsicarelli.gradle"
+            implementationClass = "plugins.KPMGradlePlugin"
+        }
+    }
+}
