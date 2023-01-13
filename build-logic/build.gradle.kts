@@ -2,16 +2,8 @@ plugins {
     `kotlin-dsl`
 }
 
-repositories {
-    mavenCentral()
-    google()
-    gradlePluginPortal()
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-}
+group = "com.rsicarelli.platform"
+version = "1.0"
 
 dependencies {
     compileOnly(libs.gradlePlugin.kotlin)
@@ -21,8 +13,6 @@ dependencies {
 }
 
 gradlePlugin {
-    isAutomatedPublishing = false
-
     with(plugins) {
         register("kpmGradlePlugin") {
             id = "com.rsicarelli.gradle"
