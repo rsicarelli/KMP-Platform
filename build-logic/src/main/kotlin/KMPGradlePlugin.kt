@@ -1,5 +1,6 @@
 import config.AndroidConfig
 import config.CompilationConfig
+import config.DesktopConfig
 import config.PublicationConfig
 import decorators.PROJECT_DEFAULTS_KEY
 import decorators.configureAndroidApp
@@ -8,20 +9,21 @@ import decorators.configureAndroidLibraryPublication
 import decorators.configureDetekt
 import decorators.configureJvmLibrary
 import decorators.configureJvmLibraryPublication
-import decorators.requireDefaults
 import decorators.configureMultiplatformLibrary
+import decorators.requireDefaults
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.extra
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
-class KPMGradlePlugin : Plugin<Project> {
+class KMPGradlePlugin : Plugin<Project> {
 
     override fun apply(target: Project) = Unit
 }
 
 fun Project.installDefaults(
     androidConfig: AndroidConfig = AndroidConfig(),
+    desktopConfig: DesktopConfig,
     compilationConfig: CompilationConfig = CompilationConfig(),
     publicationConfig: PublicationConfig = PublicationConfig(
         group = group.toString(),
@@ -31,6 +33,7 @@ fun Project.installDefaults(
     /* name = */ PROJECT_DEFAULTS_KEY,
     /* value = */ listOfNotNull(
         androidConfig,
+        desktopConfig,
         compilationConfig,
         publicationConfig
     )
@@ -76,11 +79,13 @@ fun Project.installAndroidLibraryPublication(
 
 fun Project.installMultiplatformLibrary(
     enableCompose: Boolean = false,
+    compilationConfig: CompilationConfig = requireDefaults(),
     commonMainDependencies: KotlinDependencyHandler.() -> Unit = { },
     androidMainDependencies: KotlinDependencyHandler.() -> Unit = { },
     desktopMainDependencies: KotlinDependencyHandler.() -> Unit = { },
 ) = configureMultiplatformLibrary(
     enableCompose = enableCompose,
+    compilationConfig = compilationConfig,
     commonMainDependencies = commonMainDependencies,
     androidMainDependencies = androidMainDependencies,
     desktopMainDependencies = desktopMainDependencies

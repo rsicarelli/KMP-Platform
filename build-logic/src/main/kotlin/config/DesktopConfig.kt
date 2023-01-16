@@ -29,8 +29,7 @@ data class DesktopConfig(
     )
 
     data class MacOSConfig(
-        val iconPath: String
+        val iconPath: String,
         val bundleID: String,
     )
-
 }
