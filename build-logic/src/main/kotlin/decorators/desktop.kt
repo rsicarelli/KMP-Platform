@@ -1,17 +1,17 @@
 package decorators
 
+import config.DesktopConfig
 import org.gradle.api.Project
 import org.gradle.api.compose
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.compose.desktop.DesktopExtension
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
 internal fun Project.setupDesktopApp(
-    mainClassName: String,
-    dependencyHandler: KotlinDependencyHandler.() -> Unit = {},
+    desktopConfig: DesktopConfig = requireDefaults(),
+    jvmDependencyHandler: KotlinDependencyHandler.() -> Unit = {},
 ) {
     extensions.configure<KotlinMultiplatformExtension> {
         jvm {
@@ -19,47 +19,41 @@ internal fun Project.setupDesktopApp(
         }
         sourceSets {
             named("jvmMain") {
-                dependencies(dependencyHandler)
+                dependencies(jvmDependencyHandler)
             }
         }
     }
 
     compose.configure<DesktopExtension> {
         application {
-            mainClass = mainClassName
+            mainClass = desktopConfig.mainClass
             nativeDistributions {
-                packageName = "TODO: update to configuration dsl"
-                packageVersion = "1.0.0"
-                description = "todo"
-                copyright = "© 2022 rsicarelli. All rights reserved."
-                vendor = "rsicarelli"
+                packageName = desktopConfig.packageName
+                packageVersion = desktopConfig.packageVersion
+                description = desktopConfig.description
+                copyright = desktopConfig.copyright
+                vendor = desktopConfig.vendor
 
-                targetFormats(
-                    TargetFormat.Dmg,
-                    TargetFormat.Msi,
-                    TargetFormat.Deb
-                )
+                targetFormats(*desktopConfig.targetFormats.toTypedArray())
 
-                val iconsRoot = project.file("src/main/resources/drawables")
+                val iconsRoot = project.file(desktopConfig.resourceRootPath)
 
                 linux {
-                    //                    iconFile.set(iconsRoot.resolve("launcher_icons/linux.png"))
+                    iconFile.set(iconsRoot.resolve(desktopConfig.linuxConfig.iconPath))
                 }
 
                 windows {
-                    //                    iconFile.set(iconsRoot.resolve("launcher_icons/windows.ico"))
-                    // Wondering what the heck is this? See : https://wixtoolset.org/documentation/manual/v3/howtos/general/generate_guids.html
-                    upgradeUuid = "//todo"
-                    menuGroup = packageName
-                    perUserInstall = true
+                    iconFile.set(iconsRoot.resolve(desktopConfig.windowsConfig.iconPath))
+                    upgradeUuid = desktopConfig.windowsConfig.upgradeUuid
+                    menuGroup = desktopConfig.windowsConfig.menuGroup
+                    perUserInstall = desktopConfig.windowsConfig.perUserInstall
                 }
 
                 macOS {
-                    bundleID = "com.rsicarelli"
-                    //                    iconFile.set(iconsRoot.resolve("launcher_icons/macos.icns"))
+                    bundleID = desktopConfig.macOSConfig.bundleID
+                    iconFile.set(iconsRoot.resolve(desktopConfig.macOSConfig.iconPath))
                 }
             }
         }
-
     }
 }
