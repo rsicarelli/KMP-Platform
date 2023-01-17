@@ -14,7 +14,6 @@ import org.gradle.kotlin.dsl.withGroovyBuilder
 
 internal fun Project.configureAndroidLibrary(
     enableCompose: Boolean,
-    compilationConfig: CompilationConfig,
 ) {
     configureAndroidCommon()
 

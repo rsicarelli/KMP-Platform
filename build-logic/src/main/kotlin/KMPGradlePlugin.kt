@@ -44,7 +44,6 @@ fun Project.installAndroidLibrary(
     compilationConfig: CompilationConfig = requireDefaults(),
 ) = configureAndroidLibrary(
     enableCompose = enableCompose,
-    compilationConfig = compilationConfig,
 )
 
 fun Project.installAndroidApp(

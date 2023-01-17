@@ -7,11 +7,9 @@ import org.gradle.api.Project
 import org.gradle.api.compose
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.invoke
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @OptIn(ExperimentalComposeLibrary::class)
 internal fun Project.configureMultiplatformLibrary(
@@ -68,13 +66,7 @@ internal fun Project.configureMultiplatformLibrary(
         }
     }
 
-    tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            allWarningsAsErrors = false
-            jvmTarget = "11"
-        }
-    }
-
-    configureAndroidLibrary(enableCompose, compilationConfig)
+    configureKotlinJvm(compilationConfig)
+    configureAndroidLibrary(enableCompose)
     configureJUnitTests()
 }
