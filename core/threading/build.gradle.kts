@@ -5,7 +5,7 @@
 plugins {
     id("com.android.library")
     kotlin("multiplatform")
-    alias(libs.plugins.rsicarelli.kmpgradleplatform)
+    alias(libs.plugins.rsicarelli.kmplatform)
 }
 
 installMultiplatformLibrary(

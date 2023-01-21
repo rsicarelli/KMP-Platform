@@ -14,7 +14,7 @@ buildscript {
 
 
 plugins {
-    alias(libs.plugins.rsicarelli.kmpgradleplatform)
+    alias(libs.plugins.rsicarelli.kmplatform)
 }
 
 installDefaults()

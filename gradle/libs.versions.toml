@@ -17,7 +17,7 @@ sqlDelight = "1.5.4"
 loadTheImage = "1.0.5"
 coilCompose = "2.2.2"
 accompanist = "0.28.0"
-kmpGradlePlatform = "0.1"
+kmplatform = "0.1"
 
 [libraries]
 
@@ -69,4 +69,4 @@ arturbosch-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt"
 squareup-sqldelight = { id = "com.squareup.sqldelight", version.ref = "sqlDelight" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrainsCompose" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-rsicarelli-kmpgradleplatform = {  id = "com.rsicarelli.kmp-gradle-platform", version.ref = "kmpGradlePlatform" }
+rsicarelli-kmplatform = {  id = "com.rsicarelli.kmplatform", version.ref = "kmplatform" }

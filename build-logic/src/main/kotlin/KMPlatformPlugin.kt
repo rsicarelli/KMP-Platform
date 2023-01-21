@@ -19,7 +19,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.extra
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
-class KMPGradlePlatformPlugin : Plugin<Project> {
+class KMPlatformPlugin : Plugin<Project> {
 
     override fun apply(target: Project) = Unit
 }

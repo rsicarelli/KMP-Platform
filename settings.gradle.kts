@@ -29,7 +29,7 @@ dependencyResolutionManagement {
 
 private object ProjectDefaults {
 
-    const val name: String = "KMPGradlePlatform"
+    const val name: String = "KMPlatform"
 
     val coreModules = sequenceOf(
         "designsystem", "logger", "threading"

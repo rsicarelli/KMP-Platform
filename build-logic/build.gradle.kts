@@ -6,8 +6,8 @@ plugins {
     `version-catalog`
 }
 
-group = "com.rsicarelli.kmpgradleplatform"
-version = libs.versions.kmpGradlePlatform.get()
+group = "com.rsicarelli.kmplatform"
+version = libs.versions.kmplatform.get()
 
 dependencies {
     compileOnly(libs.gradlePlugin.kotlin)
@@ -24,10 +24,10 @@ catalog {
 
 gradlePlugin {
     with(plugins) {
-        register("KMPGradlePlugin") {
-            id = "com.rsicarelli.kmp-gradle-platform"
-            version = libs.versions.kmpGradlePlatform.get()
-            implementationClass = "KMPGradlePlatformPlugin"
+        register("KMPlatform") {
+            id = "com.rsicarelli.kmplatform"
+            version = libs.versions.kmplatform.get()
+            implementationClass = "KMPlatformPlugin"
         }
     }
 }
@@ -36,7 +36,7 @@ publishing {
     publications {
         register<MavenPublication>("versionCatalog") {
             artifactId = "versioncatalog"
-            version = libs.versions.kmpGradlePlatform.get()
+            version = libs.versions.kmplatform.get()
             from(components["versionCatalog"])
         }
     }
