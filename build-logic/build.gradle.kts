@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     `kotlin-dsl`
     `maven-publish`
@@ -38,4 +40,17 @@ publishing {
             from(components["versionCatalog"])
         }
     }
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions {
+        allWarningsAsErrors = false
+        freeCompilerArgs = freeCompilerArgs + listOf("-opt-in=kotlin.RequiresOptIn")
+        jvmTarget = "11"
+    }
+}
+
+extensions.configure<JavaPluginExtension> {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
