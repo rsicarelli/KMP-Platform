@@ -50,7 +50,7 @@ internal fun Project.configureJvmLibraryPublication(
     setupPublicationRepository(config)
 }
 
-internal fun Project.configureAndroidLibraryPublication(
+internal fun Project.setAndroidLibraryPublication(
     config: PublicationConfig = requireDefaults(),
     version: String,
     artefactId: String,

@@ -15,7 +15,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT
 import org.gradle.api.tasks.testing.logging.TestLogEvent.STARTED
 import org.gradle.kotlin.dsl.withType
 
-fun Project.configureJUnitTests() {
+internal fun Project.setJUnit5() {
     tasks.withType<Test>().all {
         useJUnitPlatform {
             systemProperty("junit.jupiter.testinstance.lifecycle.default", "per_class")

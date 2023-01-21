@@ -9,19 +9,19 @@ import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-internal fun Project.configureJvmLibrary(
+internal fun Project.setJvmLibrary(
     compilationConfig: CompilationConfig = requireDefaults(),
 ) {
     with(pluginManager) {
         apply("java-library")
     }
 
-    configureJavaCompatibility(compilationConfig)
-    configureKotlinJvm(compilationConfig)
-    configureJUnitTests()
+    setJavaCompatibility(compilationConfig)
+    setKotlinCompilation(compilationConfig)
+    setJUnit5()
 }
 
-internal fun Project.configureKotlinJvm(compilationConfig: CompilationConfig) {
+internal fun Project.setKotlinCompilation(compilationConfig: CompilationConfig) {
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
             allWarningsAsErrors = compilationConfig.allWarningsAsErrors
@@ -37,7 +37,7 @@ internal fun Project.configureKotlinJvm(compilationConfig: CompilationConfig) {
     }
 }
 
-private fun Project.configureJavaCompatibility(compilationConfig: CompilationConfig) {
+private fun Project.setJavaCompatibility(compilationConfig: CompilationConfig) {
     extensions.configure<JavaPluginExtension> {
         sourceCompatibility = compilationConfig.javaVersion
         targetCompatibility = compilationConfig.javaVersion

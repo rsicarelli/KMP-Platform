@@ -14,22 +14,6 @@ import org.gradle.api.Project
 import org.gradle.api.projectNamespace
 import org.gradle.api.withExtension
 
-private fun Project.setAndroidCommon(
-    commonConfig: AndroidCommonConfig = requireDefaults(),
-) = withExtension<BaseExtension> {
-    namespace = projectNamespace
-
-    commonConfig.run {
-        compileSdkVersion(compileSdkVersion)
-        defaultConfig.minSdk = minSdkVersion
-        defaultConfig.targetSdk = targetSdkVersion
-
-        packagingOptions {
-            resources.excludes.addAll(commonConfig.packagingExcludes)
-        }
-    }
-}
-
 internal fun Project.setAndroidApp(appConfig: AndroidAppConfig) = run {
     setAndroidCommon()
     withExtension<BaseAppModuleExtension> {
@@ -55,6 +39,22 @@ internal fun Project.setAndroidLibrary(libraryConfig: AndroidLibraryConfig) = ru
                 proguardFiles = libraryConfig.consumerProguardFiles,
                 generateBuildConfig = libraryConfig.buildFeaturesConfig.generateBuildConfig
             )
+        }
+    }
+}
+
+private fun Project.setAndroidCommon(
+    commonConfig: AndroidCommonConfig = requireDefaults(),
+) = withExtension<BaseExtension> {
+    namespace = projectNamespace
+
+    commonConfig.run {
+        compileSdkVersion(compileSdkVersion)
+        defaultConfig.minSdk = minSdkVersion
+        defaultConfig.targetSdk = targetSdkVersion
+
+        packagingOptions {
+            resources.excludes.addAll(commonConfig.packagingExcludes)
         }
     }
 }

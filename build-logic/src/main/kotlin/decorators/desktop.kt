@@ -9,7 +9,7 @@ import org.jetbrains.compose.desktop.DesktopExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
-internal fun Project.setupDesktopApp(
+internal fun Project.setDesktopApp(
     desktopAppConfig: DesktopAppConfig,
     jvmDependencyHandler: KotlinDependencyHandler.() -> Unit = {},
 ) {

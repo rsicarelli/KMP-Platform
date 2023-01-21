@@ -9,7 +9,7 @@ import org.gradle.api.version
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.withType
 
-internal fun Project.configureDetekt() {
+internal fun Project.setDetekt() {
     checkIsRootProject()
 
     plugins.apply("io.gitlab.arturbosch.detekt")

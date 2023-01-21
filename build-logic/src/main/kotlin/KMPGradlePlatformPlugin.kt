@@ -6,14 +6,14 @@ import config.ComposeConfig
 import config.DesktopAppConfig
 import config.PublicationConfig
 import decorators.PROJECT_DEFAULTS_KEY
-import decorators.configureAndroidLibraryPublication
-import decorators.configureDetekt
-import decorators.configureJvmLibrary
+import decorators.setAndroidLibraryPublication
+import decorators.setDetekt
+import decorators.setJvmLibrary
 import decorators.configureJvmLibraryPublication
-import decorators.configureMultiplatformLibrary
+import decorators.setMultiplatformLibrary
 import decorators.requireDefaults
 import decorators.setAndroidApp
-import decorators.setupDesktopApp
+import decorators.setDesktopApp
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.extra
@@ -54,13 +54,13 @@ fun Project.installAndroidApp(
 
 fun Project.installDesktopApp(
     desktopAppConfig: DesktopAppConfig,
-) = setupDesktopApp(desktopAppConfig)
+) = setDesktopApp(desktopAppConfig)
 
-fun Project.installDetekt() = configureDetekt()
+fun Project.installDetekt() = setDetekt()
 
 fun Project.installJvmLibrary(
     compilationConfig: CompilationConfig = requireDefaults(),
-) = configureJvmLibrary(compilationConfig)
+) = setJvmLibrary(compilationConfig)
 
 fun Project.installJvmLibraryPublication(
     version: String,
@@ -70,7 +70,7 @@ fun Project.installJvmLibraryPublication(
 fun Project.installAndroidLibraryPublication(
     version: String,
     artefactId: String,
-) = configureAndroidLibraryPublication(version = version, artefactId = artefactId)
+) = setAndroidLibraryPublication(version = version, artefactId = artefactId)
 
 fun Project.installMultiplatformLibrary(
     compilationConfig: CompilationConfig = requireDefaults(),
@@ -79,7 +79,7 @@ fun Project.installMultiplatformLibrary(
     commonMainDependencies: KotlinDependencyHandler.() -> Unit = { },
     androidMainDependencies: KotlinDependencyHandler.() -> Unit = { },
     desktopMainDependencies: KotlinDependencyHandler.() -> Unit = { },
-) = configureMultiplatformLibrary(
+) = setMultiplatformLibrary(
     compilationConfig = compilationConfig,
     androidLibraryConfig = androidLibraryConfig,
     composeConfig = composeConfig,
