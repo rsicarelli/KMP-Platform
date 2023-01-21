@@ -1,13 +1,13 @@
-//import decorators.setupMultiplatformLibrary
-//
-//plugins {
-//    id("com.android.library")
-//    kotlin("multiplatform")
-//    id("app.dreamlightpal.gradle")
-//}
-//
-//setupMultiplatformLibrary(
-//    commonMainDependencies = {
-//        api(libs.touchlab.kermit)
-//    }
-//)
+@file:Suppress("DSL_SCOPE_VIOLATION")
+
+plugins {
+    id("com.android.library")
+    kotlin("multiplatform")
+    alias(libs.plugins.rsicarelli.kmplatform)
+}
+
+installMultiplatformLibrary(
+    commonMainDependencies = {
+        implementation(libs.touchlab.kermit)
+    }
+)
