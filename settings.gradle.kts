@@ -24,6 +24,7 @@ dependencyResolutionManagement {
         mavenCentral()
         google()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://jitpack.io")
     }
 }
 
@@ -32,8 +33,8 @@ private object ProjectDefaults {
     const val name: String = "KMPlatform"
 
     val coreModules = sequenceOf(
-        "designsystem", "logger", "threading"
-    ).map { ":core:$it" }.asIterable()
+        "copan", "logger", "threading"
+    ).map { ":platform:$it" }.asIterable()
 
     val sharedFiles = sequenceOf(
         "gradle.properties", "gradlew",

@@ -8,6 +8,7 @@ buildscript {
     dependencies {
         classpath(libs.gradlePlugin.kotlin)
         classpath(libs.gradlePlugin.android)
+        classpath(libs.gradlePlugin.compose)
         classpath(libs.gradlePlugin.detekt)
     }
 }

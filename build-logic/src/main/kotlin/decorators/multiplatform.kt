@@ -21,10 +21,6 @@ internal fun Project.setMultiplatformLibrary(
     androidMainDependencies: KotlinDependencyHandler.() -> Unit,
     desktopMainDependencies: KotlinDependencyHandler.() -> Unit,
 ) {
-    pluginManager.apply {
-        apply("com.android.library")
-        apply("kotlin-multiplatform")
-    }
     extensions.configure<KotlinMultiplatformExtension> {
         android()
         jvm("desktop")

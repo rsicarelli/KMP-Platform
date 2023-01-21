@@ -30,11 +30,7 @@ internal inline fun <reified T : Any> Project.withExtension(
 
 internal val Project.projectNamespace: String
     get() {
-        val formattedParent = project.parent.toString()
-            .replace(":", ".")
-            .replace("'", "")
-            .replace("project", "")
-            .trim()
+        val parentName = parent?.parent?.name?.lowercase()
 
-        return "com.rsicarelli.$formattedParent.$name"
+        return "com.rsicarelli.$parentName.$name"
     }
