@@ -3,8 +3,8 @@ package config
 import org.gradle.api.JavaVersion
 
 data class CompilationConfig(
-    val javaVersion: JavaVersion = JavaVersion.VERSION_11,
-    val jvmTarget: String = "11",
+    val javaVersion: JavaVersion = JavaVersion.VERSION_17,
+    val jvmTarget: String = "17",
     val allWarningsAsErrors: Boolean = false,
     val featureOptInSequence: Sequence<FeatureOptIn> = sequenceOf(),
 ) {

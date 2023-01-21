@@ -82,7 +82,7 @@ private fun LibraryExtension.setLibraryVariants(
 ) = libraryVariants.all {
     buildTypes {
         defaultConfig {
-            consumerProguardFiles(proguardFiles)
+            consumerProguardFiles(proguardFiles.first())
         }
     }
     generateBuildConfigProvider.get().enabled = generateBuildConfig

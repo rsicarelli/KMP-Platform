@@ -6,14 +6,14 @@ import config.ComposeConfig
 import config.DesktopAppConfig
 import config.PublicationConfig
 import decorators.PROJECT_DEFAULTS_KEY
-import decorators.setAndroidLibraryPublication
-import decorators.setDetekt
-import decorators.setJvmLibrary
 import decorators.configureJvmLibraryPublication
-import decorators.setMultiplatformLibrary
 import decorators.requireDefaults
 import decorators.setAndroidApp
+import decorators.setAndroidLibraryPublication
 import decorators.setDesktopApp
+import decorators.setDetekt
+import decorators.setJvmLibrary
+import decorators.setMultiplatformLibrary
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.extra
@@ -75,7 +75,7 @@ fun Project.installAndroidLibraryPublication(
 fun Project.installMultiplatformLibrary(
     compilationConfig: CompilationConfig = requireDefaults(),
     androidLibraryConfig: AndroidLibraryConfig = requireDefaults(),
-    composeConfig: ComposeConfig = requireDefaults(),
+    composeConfig: ComposeConfig? = null,
     commonMainDependencies: KotlinDependencyHandler.() -> Unit = { },
     androidMainDependencies: KotlinDependencyHandler.() -> Unit = { },
     desktopMainDependencies: KotlinDependencyHandler.() -> Unit = { },

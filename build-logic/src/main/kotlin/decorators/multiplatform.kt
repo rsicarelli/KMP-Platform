@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 internal fun Project.setMultiplatformLibrary(
     androidLibraryConfig: AndroidLibraryConfig,
     compilationConfig: CompilationConfig,
-    composeConfig: ComposeConfig? = null,
+    composeConfig: ComposeConfig?,
     commonMainDependencies: KotlinDependencyHandler.() -> Unit,
     androidMainDependencies: KotlinDependencyHandler.() -> Unit,
     desktopMainDependencies: KotlinDependencyHandler.() -> Unit,
