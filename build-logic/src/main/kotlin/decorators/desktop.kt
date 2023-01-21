@@ -1,6 +1,6 @@
 package decorators
 
-import config.DesktopConfig
+import config.DesktopAppConfig
 import org.gradle.api.Project
 import org.gradle.api.compose
 import org.gradle.kotlin.dsl.configure
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
 internal fun Project.setupDesktopApp(
-    desktopConfig: DesktopConfig = requireDefaults(),
+    desktopAppConfig: DesktopAppConfig,
     jvmDependencyHandler: KotlinDependencyHandler.() -> Unit = {},
 ) {
     extensions.configure<KotlinMultiplatformExtension> {
@@ -26,32 +26,32 @@ internal fun Project.setupDesktopApp(
 
     compose.configure<DesktopExtension> {
         application {
-            mainClass = desktopConfig.mainClass
+            mainClass = desktopAppConfig.mainClass
             nativeDistributions {
-                packageName = desktopConfig.packageName
-                packageVersion = desktopConfig.packageVersion
-                description = desktopConfig.description
-                copyright = desktopConfig.copyright
-                vendor = desktopConfig.vendor
+                packageName = desktopAppConfig.packageName
+                packageVersion = desktopAppConfig.packageVersion
+                description = desktopAppConfig.description
+                copyright = desktopAppConfig.copyright
+                vendor = desktopAppConfig.vendor
 
-                targetFormats(*desktopConfig.targetFormats.toTypedArray())
+                targetFormats(*desktopAppConfig.targetFormats.toTypedArray())
 
-                val iconsRoot = project.file(desktopConfig.resourceRootPath)
+                val iconsRoot = project.file(desktopAppConfig.resourceRootPath)
 
                 linux {
-                    iconFile.set(iconsRoot.resolve(desktopConfig.linuxConfig.iconPath))
+                    iconFile.set(iconsRoot.resolve(desktopAppConfig.linuxConfig.iconPath))
                 }
 
                 windows {
-                    iconFile.set(iconsRoot.resolve(desktopConfig.windowsConfig.iconPath))
-                    upgradeUuid = desktopConfig.windowsConfig.upgradeUuid
-                    menuGroup = desktopConfig.windowsConfig.menuGroup
-                    perUserInstall = desktopConfig.windowsConfig.perUserInstall
+                    iconFile.set(iconsRoot.resolve(desktopAppConfig.windowsConfig.iconPath))
+                    upgradeUuid = desktopAppConfig.windowsConfig.upgradeUuid
+                    menuGroup = desktopAppConfig.windowsConfig.menuGroup
+                    perUserInstall = desktopAppConfig.windowsConfig.perUserInstall
                 }
 
                 macOS {
-                    bundleID = desktopConfig.macOSConfig.bundleID
-                    iconFile.set(iconsRoot.resolve(desktopConfig.macOSConfig.iconPath))
+                    bundleID = desktopAppConfig.macOSConfig.bundleID
+                    iconFile.set(iconsRoot.resolve(desktopAppConfig.macOSConfig.iconPath))
                 }
             }
         }

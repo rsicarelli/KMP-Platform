@@ -1,20 +1,21 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+@file:Suppress("DSL_SCOPE_VIOLATION")
+
+buildscript {
+    repositories {
+        mavenCentral()
+        google()
+    }
+    dependencies {
+        classpath(libs.gradlePlugin.kotlin)
+        classpath(libs.gradlePlugin.android)
+        classpath(libs.gradlePlugin.detekt)
+    }
+}
+
 
 plugins {
-    kotlin("jvm") version "1.7.21"
+    alias(libs.plugins.rsicarelli.kmpgradleplatform)
 }
 
-group = "com.rsicarelli"
-version = "1.0-SNAPSHOT"
-
-dependencies {
-    testImplementation(kotlin("test"))
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
-}
+installDefaults()
+installDetekt()

@@ -2,7 +2,9 @@
 
 package decorators
 
+import config.AndroidConfig
 import config.CompilationConfig
+import config.ComposeConfig
 import org.gradle.api.Project
 import org.gradle.api.compose
 import org.gradle.kotlin.dsl.configure
@@ -13,8 +15,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
 @OptIn(ExperimentalComposeLibrary::class)
 internal fun Project.configureMultiplatformLibrary(
-    enableCompose: Boolean = false,
+    androidConfig: AndroidConfig,
     compilationConfig: CompilationConfig,
+    composeConfig: ComposeConfig? = null,
     commonMainDependencies: KotlinDependencyHandler.() -> Unit,
     androidMainDependencies: KotlinDependencyHandler.() -> Unit,
     desktopMainDependencies: KotlinDependencyHandler.() -> Unit,
@@ -23,7 +26,7 @@ internal fun Project.configureMultiplatformLibrary(
         pluginManager.apply {
             apply("com.android.library")
             apply("kotlin-multiplatform")
-            if (enableCompose) {
+            if (composeConfig != null) {
                 apply("org.jetbrains.compose")
             }
         }
@@ -32,23 +35,25 @@ internal fun Project.configureMultiplatformLibrary(
 
         sourceSets {
             named("commonMain") {
-                if (enableCompose) {
+                composeConfig?.run {
                     dependencies {
-                        compileOnly(compose.dependencies.runtime)
-                        compileOnly(compose.dependencies.foundation)
-                        compileOnly(compose.dependencies.material3)
+                        if (runtime)
+                            compileOnly(compose.dependencies.runtime)
+                        if (ui) {
+                            compileOnly(compose.dependencies.foundation)
+                            compileOnly(compose.dependencies.material3)
+                        }
                     }
                 }
-
                 dependencies(commonMainDependencies)
             }
             named("androidMain") {
                 dependencies(androidMainDependencies)
             }
             named("desktopMain") {
-                if (enableCompose) {
+                composeConfig?.run {
                     dependencies {
-                        compileOnly(compose.dependencies.desktop.common)
+                        if (ui) compileOnly(compose.dependencies.desktop.common)
                     }
                 }
 
@@ -67,6 +72,6 @@ internal fun Project.configureMultiplatformLibrary(
     }
 
     configureKotlinJvm(compilationConfig)
-    configureAndroidLibrary(enableCompose)
+    setAndroidLibrary(androidConfig)
     configureJUnitTests()
 }

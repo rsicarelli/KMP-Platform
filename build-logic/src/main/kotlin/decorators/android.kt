@@ -6,85 +6,91 @@ import com.android.build.api.dsl.CommonExtension
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
-import config.CompilationConfig
-import org.gradle.api.JavaVersion
+import config.AndroidConfig
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.withGroovyBuilder
+import org.gradle.api.projectNamespace
+import org.gradle.api.withExtension
 
-internal fun Project.configureAndroidLibrary(
-    enableCompose: Boolean,
-) {
-    configureAndroidCommon()
+private fun Project.setAndroidCommon(
+    androidConfig: AndroidConfig,
+) = withExtension<BaseExtension> {
+    namespace = projectNamespace
 
-    extensions.configure<LibraryExtension> {
-        libraryVariants.all {
-            buildTypes {
-                defaultConfig {
-                    consumerProguardFiles("proguard-rules.pro", "consumer-rules.pro")
-                }
-            }
-            generateBuildConfigProvider.get().enabled = false
-        }
+    compileSdkVersion(androidConfig.compileSdkVersion)
 
-        configureLint()
+    defaultConfig {
+        minSdk = androidConfig.minSdkVersion
+        targetSdk = androidConfig.targetSdkVersion
+    }
 
-        sourceSets {
-            named("main") {
-                manifest.srcFile("src/androidMain/AndroidManifest.xml")
-            }
-        }
+    packagingOptions {
+        resources.excludes.addAll(androidConfig.packagingExcludes)
     }
 }
 
-fun Project.configureAndroidApp(
+internal fun Project.setAndroidApp(
     applicationId: String,
-    versionCode: Int,
     versionName: String,
-    compilationConfig: CompilationConfig,
-    enableCompose: Boolean,
+    versionCode: Int,
+    androidConfig: AndroidConfig,
 ) {
-    configureAndroidCommon()
+    setAndroidCommon(androidConfig)
 
-    extensions.configure<BaseAppModuleExtension> {
+    withExtension<BaseAppModuleExtension> {
         defaultConfig {
             this.applicationId = applicationId
             this.versionCode = versionCode
-            this.versionName = versionName
+            this.versionName = "$versionName.$versionCode"
         }
 
-        configureLint()
+        setLint(androidConfig.lintAbortOnError)
     }
 }
 
-private fun Project.configureAndroidCommon(
-    compileSdk: Int = 33,
-    minSdk: Int = 26,
-    targetSdk: Int = 33,
+internal fun Project.setAndroidLibrary(
+    androidConfig: AndroidConfig,
 ) {
-    extensions.configure<BaseExtension> {
-        namespace = "$group.${project.name}"
+    setAndroidCommon(androidConfig)
 
-        compileSdkVersion(compileSdk)
-
-        defaultConfig {
-            this.minSdk = minSdk
-            this.targetSdk = targetSdk
-        }
-
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_11
-            targetCompatibility = JavaVersion.VERSION_11
-        }
-
-        withGroovyBuilder {
-            "kotlinOptions" {
-                setProperty("jvmTarget", "11")
-            }
+    withExtension<LibraryExtension> {
+        androidConfig.run {
+            setManifestPath(manifestPath = manifestPath)
+            setBuildFeatures(buildFeaturesConfig = buildFeaturesConfig)
+            setLint(abortOnError = lintAbortOnError)
+            setLibraryVariants(
+                proguardFiles = androidConfig.consumerProguardFiles,
+                generateBuildConfig = androidConfig.buildFeaturesConfig.generateBuildConfig
+            )
         }
     }
 }
 
-private fun CommonExtension<*, *, *, *>.configureLint() {
-    lint { abortOnError = false }
+private fun CommonExtension<*, *, *, *>.setLint(abortOnError: Boolean) {
+    lint { this.abortOnError = abortOnError }
 }
+
+private fun LibraryExtension.setBuildFeatures(buildFeaturesConfig: AndroidConfig.AndroidBuildFeaturesConfig) =
+    buildFeatures {
+        androidResources = buildFeaturesConfig.generateAndroidResources
+        resValues = buildFeaturesConfig.generateResValues
+    }
+
+private fun LibraryExtension.setManifestPath(manifestPath: String) =
+    sourceSets {
+        named("main") {
+            manifest.srcFile(manifestPath)
+        }
+    }
+
+private fun LibraryExtension.setLibraryVariants(
+    proguardFiles: Sequence<String>,
+    generateBuildConfig: Boolean,
+) = libraryVariants.all {
+    buildTypes {
+        defaultConfig {
+            consumerProguardFiles(proguardFiles)
+        }
+    }
+    generateBuildConfigProvider.get().enabled = generateBuildConfig
+}
+

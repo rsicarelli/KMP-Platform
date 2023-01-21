@@ -2,7 +2,7 @@ package config
 
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
-data class DesktopConfig(
+data class DesktopAppConfig(
     val mainClass: String,
     val packageName: String,
     val packageVersion: String,

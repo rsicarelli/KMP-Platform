@@ -2,6 +2,7 @@ package org.gradle.api
 
 import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.compose.ComposeExtension
 
@@ -20,3 +21,20 @@ internal val Project.compose
 internal fun Project.checkIsRootProject() {
     check(rootProject == this) { "Must be called on a root project" }
 }
+
+internal inline fun <reified T : Any> Project.withExtension(
+    crossinline block: T.() -> Unit,
+) {
+    extensions.findByType<T>()?.let { it.block() }
+}
+
+internal val Project.projectNamespace: String
+    get() {
+        val formattedParent = project.parent.toString()
+            .replace(":", ".")
+            .replace("'", "")
+            .replace("project", "")
+            .trim()
+
+        return "com.rsicarelli.$formattedParent.$name"
+    }

@@ -1,14 +1,16 @@
 @file:Suppress("UnstableApiUsage")
 
+import org.gradle.api.internal.FeaturePreviews.Feature.STABLE_CONFIGURATION_CACHE
 import org.gradle.api.internal.FeaturePreviews.Feature.TYPESAFE_PROJECT_ACCESSORS
 
 enableFeaturePreview(TYPESAFE_PROJECT_ACCESSORS.name)
+enableFeaturePreview(STABLE_CONFIGURATION_CACHE.name)
 
 pluginManagement {
     repositories {
-        mavenCentral()
         gradlePluginPortal()
         google()
+        mavenCentral()
     }
 
     includeBuild("build-logic")
@@ -22,7 +24,6 @@ dependencyResolutionManagement {
         mavenCentral()
         google()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-        maven("https://jitpack.io")
     }
 }
 
