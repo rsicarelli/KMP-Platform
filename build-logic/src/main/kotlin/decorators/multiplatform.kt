@@ -2,7 +2,7 @@
 
 package decorators
 
-import config.AndroidConfig
+import config.AndroidConfig.AndroidLibraryConfig
 import config.CompilationConfig
 import config.ComposeConfig
 import org.gradle.api.Project
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
 @OptIn(ExperimentalComposeLibrary::class)
 internal fun Project.configureMultiplatformLibrary(
-    androidConfig: AndroidConfig,
+    androidLibraryConfig: AndroidLibraryConfig,
     compilationConfig: CompilationConfig,
     composeConfig: ComposeConfig? = null,
     commonMainDependencies: KotlinDependencyHandler.() -> Unit,
@@ -61,17 +61,12 @@ internal fun Project.configureMultiplatformLibrary(
             }
 
             removeAll { sourceSet ->
-                setOf(
-                    "androidAndroidTestRelease",
-                    "androidTestFixtures",
-                    "androidTestFixturesDebug",
-                    "androidTestFixturesRelease",
-                ).contains(sourceSet.name)
+                androidLibraryConfig.ignoredSourceSets.contains(sourceSet.name)
             }
         }
     }
 
     configureKotlinJvm(compilationConfig)
-    setAndroidLibrary(androidConfig)
+    setAndroidLibrary(androidLibraryConfig)
     configureJUnitTests()
 }

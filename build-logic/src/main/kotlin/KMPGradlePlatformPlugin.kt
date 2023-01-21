@@ -1,16 +1,18 @@
-import config.AndroidConfig
+import config.AndroidConfig.AndroidAppConfig
+import config.AndroidConfig.AndroidCommonConfig
+import config.AndroidConfig.AndroidLibraryConfig
 import config.CompilationConfig
 import config.ComposeConfig
 import config.DesktopAppConfig
 import config.PublicationConfig
 import decorators.PROJECT_DEFAULTS_KEY
-import decorators.setAndroidApp
 import decorators.configureAndroidLibraryPublication
 import decorators.configureDetekt
 import decorators.configureJvmLibrary
 import decorators.configureJvmLibraryPublication
 import decorators.configureMultiplatformLibrary
 import decorators.requireDefaults
+import decorators.setAndroidApp
 import decorators.setupDesktopApp
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -23,7 +25,10 @@ class KMPGradlePlatformPlugin : Plugin<Project> {
 }
 
 fun Project.installDefaults(
-    androidConfig: AndroidConfig = AndroidConfig(),
+    androidAppConfig: AndroidAppConfig? = null,
+    desktopAppConfig: DesktopAppConfig? = null,
+    androidCommonConfig: AndroidCommonConfig = AndroidCommonConfig(),
+    androidLibraryConfig: AndroidLibraryConfig = AndroidLibraryConfig(),
     compilationConfig: CompilationConfig = CompilationConfig(),
     publicationConfig: PublicationConfig = PublicationConfig(
         group = group.toString(),
@@ -32,22 +37,19 @@ fun Project.installDefaults(
 ) = extra.set(
     /* name = */ PROJECT_DEFAULTS_KEY,
     /* value = */ listOfNotNull(
-        androidConfig,
+        desktopAppConfig,
+        androidCommonConfig,
+        androidLibraryConfig,
+        androidAppConfig,
         compilationConfig,
         publicationConfig
     )
 )
 
 fun Project.installAndroidApp(
-    applicationId: String,
-    versionCode: Int,
-    versionName: String,
-    androidConfig: AndroidConfig = requireDefaults(),
+    androidAppConfig: AndroidAppConfig = requireDefaults(),
 ) = setAndroidApp(
-    applicationId = applicationId,
-    versionName = versionName,
-    versionCode = versionCode,
-    androidConfig = androidConfig,
+    appConfig = androidAppConfig,
 )
 
 fun Project.installDesktopApp(
@@ -72,14 +74,14 @@ fun Project.installAndroidLibraryPublication(
 
 fun Project.installMultiplatformLibrary(
     compilationConfig: CompilationConfig = requireDefaults(),
-    androidConfig: AndroidConfig = requireDefaults(),
+    androidLibraryConfig: AndroidLibraryConfig = requireDefaults(),
     composeConfig: ComposeConfig = requireDefaults(),
     commonMainDependencies: KotlinDependencyHandler.() -> Unit = { },
     androidMainDependencies: KotlinDependencyHandler.() -> Unit = { },
     desktopMainDependencies: KotlinDependencyHandler.() -> Unit = { },
 ) = configureMultiplatformLibrary(
     compilationConfig = compilationConfig,
-    androidConfig = androidConfig,
+    androidLibraryConfig = androidLibraryConfig,
     composeConfig = composeConfig,
     commonMainDependencies = commonMainDependencies,
     androidMainDependencies = androidMainDependencies,

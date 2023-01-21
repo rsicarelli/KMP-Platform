@@ -7,69 +7,63 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
 import config.AndroidConfig
+import config.AndroidConfig.AndroidAppConfig
+import config.AndroidConfig.AndroidCommonConfig
+import config.AndroidConfig.AndroidLibraryConfig
 import org.gradle.api.Project
 import org.gradle.api.projectNamespace
 import org.gradle.api.withExtension
 
 private fun Project.setAndroidCommon(
-    androidConfig: AndroidConfig,
+    commonConfig: AndroidCommonConfig = requireDefaults(),
 ) = withExtension<BaseExtension> {
     namespace = projectNamespace
 
-    compileSdkVersion(androidConfig.compileSdkVersion)
+    commonConfig.run {
+        compileSdkVersion(compileSdkVersion)
+        defaultConfig.minSdk = minSdkVersion
+        defaultConfig.targetSdk = targetSdkVersion
 
-    defaultConfig {
-        minSdk = androidConfig.minSdkVersion
-        targetSdk = androidConfig.targetSdkVersion
-    }
-
-    packagingOptions {
-        resources.excludes.addAll(androidConfig.packagingExcludes)
-    }
-}
-
-internal fun Project.setAndroidApp(
-    applicationId: String,
-    versionName: String,
-    versionCode: Int,
-    androidConfig: AndroidConfig,
-) {
-    setAndroidCommon(androidConfig)
-
-    withExtension<BaseAppModuleExtension> {
-        defaultConfig {
-            this.applicationId = applicationId
-            this.versionCode = versionCode
-            this.versionName = "$versionName.$versionCode"
+        packagingOptions {
+            resources.excludes.addAll(commonConfig.packagingExcludes)
         }
-
-        setLint(androidConfig.lintAbortOnError)
     }
 }
 
-internal fun Project.setAndroidLibrary(
-    androidConfig: AndroidConfig,
-) {
-    setAndroidCommon(androidConfig)
+internal fun Project.setAndroidApp(appConfig: AndroidAppConfig) = run {
+    setAndroidCommon()
+    withExtension<BaseAppModuleExtension> {
+        appConfig.run {
+            defaultConfig {
+                applicationId = id
+                versionCode = version.code
+                versionName = version.formattedName
+            }
+            setLint(lintOptions)
+        }
+    }
+}
 
+internal fun Project.setAndroidLibrary(libraryConfig: AndroidLibraryConfig) = run {
+    setAndroidCommon()
     withExtension<LibraryExtension> {
-        androidConfig.run {
+        libraryConfig.run {
             setManifestPath(manifestPath = manifestPath)
             setBuildFeatures(buildFeaturesConfig = buildFeaturesConfig)
-            setLint(abortOnError = lintAbortOnError)
+            setLint(abortOnError = libraryConfig.lintOptions)
             setLibraryVariants(
-                proguardFiles = androidConfig.consumerProguardFiles,
-                generateBuildConfig = androidConfig.buildFeaturesConfig.generateBuildConfig
+                proguardFiles = libraryConfig.consumerProguardFiles,
+                generateBuildConfig = libraryConfig.buildFeaturesConfig.generateBuildConfig
             )
         }
     }
 }
 
-private fun CommonExtension<*, *, *, *>.setLint(abortOnError: Boolean) {
-    lint { this.abortOnError = abortOnError }
+private fun CommonExtension<*, *, *, *>.setLint(abortOnError: AndroidConfig.LintOptions) {
+    lint { this.abortOnError = abortOnError.abortOnError }
 }
 
-private fun LibraryExtension.setBuildFeatures(buildFeaturesConfig: AndroidConfig.AndroidBuildFeaturesConfig) =
+private fun LibraryExtension.setBuildFeatures(buildFeaturesConfig: AndroidLibraryConfig.AndroidBuildFeaturesConfig) =
     buildFeatures {
         androidResources = buildFeaturesConfig.generateAndroidResources
         resValues = buildFeaturesConfig.generateResValues
