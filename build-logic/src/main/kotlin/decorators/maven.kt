@@ -1,115 +1,145 @@
 package decorators
 
-import com.android.build.gradle.LibraryExtension
+import config.AndroidConfig
 import config.PublicationConfig
+import decorators.ComponentPublication.Android
+import decorators.ComponentPublication.Jvm
+import decorators.ComponentPublication.Multiplatform
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.withExtension
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.creating
 import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.getValue
 import org.gradle.kotlin.dsl.maven
 import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.registering
 import org.gradle.kotlin.dsl.the
+import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.signing.SigningExtension
 
-internal fun Project.configureJvmLibraryPublication(
-    config: PublicationConfig = requireDefaults(),
-    version: String,
+private const val JAVADOC_JAR_TASK_NAME = "javadocJar"
+
+private fun Project.ensureJavadocJarTask(): Task =
+    tasks.findByName(JAVADOC_JAR_TASK_NAME) ?: createJavadocJarTask()
+
+private fun Project.createJavadocJarTask(): Task =
+    tasks.create<Jar>(JAVADOC_JAR_TASK_NAME).apply {
+        archiveClassifier.set("javadoc")
+    }
+
+private fun Project.applyMavenPublish() {
+    plugins.apply("maven-publish")
+}
+
+sealed interface ComponentPublication {
+    object Multiplatform : ComponentPublication
+    object Jvm : ComponentPublication
+    object Android : ComponentPublication
+}
+
+internal fun Project.setComponentPublication(
+    componentPublication: ComponentPublication,
     artefactId: String,
+    publicationConfig: PublicationConfig = requireDefaults(),
 ) {
     applyMavenPublish()
+    group = publicationConfig.group
 
+    when (componentPublication) {
+        Multiplatform -> setMultiplatformLibraryPublication(artefactId)
+        Android -> setAndroidLibraryPublication(artefactId)
+        Jvm -> setJvmLibraryPublication(artefactId)
+    }
+
+    withExtension<PublishingExtension> {
+        publications.withType<MavenPublication>().configureEach {
+            defaultMavenPublication(project, publicationConfig, artefactId)
+        }
+    }
+
+    setupPublicationRepository(publicationConfig)
+}
+
+private fun Project.setMultiplatformLibraryPublication(artefactId: String) =
+    withExtension<AndroidLibraryExtension> {
+        publishing {
+            multipleVariants(artefactId) {
+                with(requireDefaults<AndroidConfig>()) {
+                    variants.forEach {
+                        includeBuildTypeValues(it)
+                    }
+                }
+            }
+        }
+    }
+
+internal fun Project.setJvmLibraryPublication(artefactId: String) {
     val sourceJar by tasks.registering(Jar::class) {
-        from(project.the<JavaPluginExtension>().sourceSets["main"].allSource)
+        from(the<JavaPluginExtension>().sourceSets["main"].allSource)
         archiveClassifier.set("sources")
+    }
+
+    withExtension<PublishingExtension> {
+        publications {
+            create<MavenPublication>(artefactId) {
+                from(components["java"])
+                artifact(sourceJar.get())
+            }
+        }
+    }
+}
+
+internal fun Project.setAndroidLibraryPublication(artefactId: String) {
+    val sourceJarTask by tasks.creating(Jar::class) {
+        from(the<AndroidLibraryExtension>().sourceSets.getByName("main").java.srcDirs)
+        archiveClassifier.set("source")
     }
 
     extensions.configure<PublishingExtension> {
         publications {
             create<MavenPublication>(artefactId) {
-                from(components["java"])
-                artifact(sourceJar.get())
-
-                group = config.group
-                this.version = version
-                this.artifactId = artefactId
-
-                setupPublicationPom(project, config)
+                from(components["release"])
+                artifact(sourceJarTask)
             }
         }
     }
-
-    setupPublicationRepository(config)
 }
 
-internal fun Project.setAndroidLibraryPublication(
-    config: PublicationConfig = requireDefaults(),
-    version: String,
-    artefactId: String,
-) {
-    applyMavenPublish()
-
-    val androidExtension = extensions.getByType<LibraryExtension>()
-
-    val sourceJarTask by tasks.creating(Jar::class) {
-        from(androidExtension.sourceSets.getByName("main").java.srcDirs)
-        archiveClassifier.set("source")
-    }
-
-    afterEvaluate {
-        extensions.configure<PublishingExtension> {
-            publications {
-                create<MavenPublication>(artefactId) {
-                    from(components["release"])
-                    artifact(sourceJarTask)
-
-                    groupId = config.group
-                    this.version = version
-                    artifactId = artefactId
-
-                    setupPublicationPom(project, config)
-                }
-            }
-        }
-    }
-
-    setupPublicationRepository(config)
-}
-
-internal fun MavenPublication.setupPublicationPom(
+private fun MavenPublication.defaultMavenPublication(
     project: Project,
     config: PublicationConfig,
-) {
-    artifact(project.ensureJavadocJarTask())
+    artefactId: String,
+) = pom {
+    groupId = config.group
+    artifactId = artefactId
 
-    pom {
-        name.set(project.name)
-        description.set(project.description)
-        url.set(config.projectUrl)
+    name.set(project.name)
+    description.set(project.description)
+    url.set(config.projectUrl)
 
-        licenses {
-            config.license.forEach {
-                license {
-                    name.set(it.licenseName)
-                    url.set(it.licenseUrl)
-                }
+    licenses {
+        config.license.forEach {
+            license {
+                name.set(it.licenseName)
+                url.set(it.licenseUrl)
             }
         }
-
-        scm {
-            url.set(config.projectUrl)
-            connection.set(config.scmUrl)
-            developerConnection.set(config.scmUrl)
-        }
     }
+
+    scm {
+        url.set(config.projectUrl)
+        connection.set(config.scmUrl)
+        developerConnection.set(config.scmUrl)
+    }
+}.also {
+    artifact(project.ensureJavadocJarTask())
 }
 
 internal fun Project.setupPublicationRepository(config: PublicationConfig) {
@@ -132,18 +162,4 @@ internal fun Project.setupPublicationRepository(config: PublicationConfig) {
             }
         }
     }
-}
-
-private const val JAVADOC_JAR_TASK_NAME = "javadocJar"
-
-private fun Project.ensureJavadocJarTask(): Task =
-    tasks.findByName(JAVADOC_JAR_TASK_NAME) ?: createJavadocJarTask()
-
-private fun Project.createJavadocJarTask(): Task =
-    tasks.create<Jar>(JAVADOC_JAR_TASK_NAME).apply {
-        archiveClassifier.set("javadoc")
-    }
-
-private fun Project.applyMavenPublish() {
-    plugins.apply("maven-publish")
 }

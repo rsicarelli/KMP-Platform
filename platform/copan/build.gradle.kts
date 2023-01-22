@@ -3,6 +3,7 @@
 import config.AndroidConfig.AndroidLibraryConfig
 import config.AndroidConfig.AndroidLibraryConfig.AndroidBuildFeaturesConfig
 import config.ComposeConfig
+import decorators.ComponentPublication
 
 plugins {
     id("com.android.library")
@@ -11,6 +12,10 @@ plugins {
     alias(libs.plugins.rsicarelli.kmplatform)
 }
 
+version = libs.versions.kmplatform.get()
+description = "Copan is the KMPlatform Design System with common Composable UI implementations."
+
+installComponentPublication(ComponentPublication.Multiplatform)
 installMultiplatformLibrary(
     composeConfig = ComposeConfig(
         runtime = true,

@@ -5,14 +5,13 @@ import config.CompilationConfig
 import config.ComposeConfig
 import config.DesktopAppConfig
 import config.PublicationConfig
+import decorators.ComponentPublication
 import decorators.PROJECT_DEFAULTS_KEY
-import decorators.configureJvmLibraryPublication
 import decorators.requireDefaults
 import decorators.setAndroidApp
-import decorators.setAndroidLibraryPublication
+import decorators.setComponentPublication
 import decorators.setDesktopApp
 import decorators.setDetekt
-import decorators.setJvmLibrary
 import decorators.setMultiplatformLibrary
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -58,19 +57,10 @@ fun Project.installDesktopApp(
 
 fun Project.installDetekt() = setDetekt()
 
-fun Project.installJvmLibrary(
-    compilationConfig: CompilationConfig = requireDefaults(),
-) = setJvmLibrary(compilationConfig)
-
-fun Project.installJvmLibraryPublication(
-    version: String,
-    artefactId: String,
-) = configureJvmLibraryPublication(version = version, artefactId = artefactId)
-
-fun Project.installAndroidLibraryPublication(
-    version: String,
-    artefactId: String,
-) = setAndroidLibraryPublication(version = version, artefactId = artefactId)
+fun Project.installComponentPublication(
+    componentPublication: ComponentPublication,
+    artifactId: String = name,
+) = setComponentPublication(componentPublication, artifactId)
 
 fun Project.installMultiplatformLibrary(
     compilationConfig: CompilationConfig = requireDefaults(),

@@ -13,10 +13,12 @@ buildscript {
     }
 }
 
-
 plugins {
     alias(libs.plugins.rsicarelli.kmplatform)
 }
+
+group = "com.rsicarelli.kmplatform"
+version = libs.versions.kmplatform.get()
 
 installDefaults()
 installDetekt()

@@ -1,7 +1,10 @@
 package config
 
+import org.gradle.internal.impldep.org.bouncycastle.util.StringList
+
 sealed class AndroidConfig(
     val lintOptions: LintOptions = LintOptions(),
+    val variants: Sequence<String> = sequenceOf("debug", "release"),
 ) {
 
     data class LintOptions(

@@ -14,9 +14,13 @@ import org.gradle.api.Project
 import org.gradle.api.projectNamespace
 import org.gradle.api.withExtension
 
+typealias AndroidLibraryExtension = LibraryExtension
+typealias AndroidBaseExtension = BaseExtension
+typealias AndroidAppExtension = BaseAppModuleExtension
+
 internal fun Project.setAndroidApp(appConfig: AndroidAppConfig) = run {
     setAndroidCommon()
-    withExtension<BaseAppModuleExtension> {
+    withExtension<AndroidAppExtension> {
         appConfig.run {
             defaultConfig {
                 applicationId = id
@@ -30,7 +34,7 @@ internal fun Project.setAndroidApp(appConfig: AndroidAppConfig) = run {
 
 internal fun Project.setAndroidLibrary(libraryConfig: AndroidLibraryConfig) = run {
     setAndroidCommon()
-    withExtension<LibraryExtension> {
+    withExtension<AndroidLibraryExtension> {
         libraryConfig.run {
             setManifestPath(manifestPath = manifestPath)
             setBuildFeatures(buildFeaturesConfig = buildFeaturesConfig)
@@ -45,13 +49,16 @@ internal fun Project.setAndroidLibrary(libraryConfig: AndroidLibraryConfig) = ru
 
 private fun Project.setAndroidCommon(
     commonConfig: AndroidCommonConfig = requireDefaults(),
-) = withExtension<BaseExtension> {
+) = withExtension<AndroidBaseExtension> {
     namespace = projectNamespace
 
     commonConfig.run {
         compileSdkVersion(compileSdkVersion)
         defaultConfig.minSdk = minSdkVersion
         defaultConfig.targetSdk = targetSdkVersion
+        defaultConfig.aarMetadata {
+            minCompileSdk = minSdkVersion
+        }
 
         packagingOptions {
             resources.excludes.addAll(commonConfig.packagingExcludes)
@@ -63,20 +70,20 @@ private fun CommonExtension<*, *, *, *>.setLint(abortOnError: AndroidConfig.Lint
     lint { this.abortOnError = abortOnError.abortOnError }
 }
 
-private fun LibraryExtension.setBuildFeatures(buildFeaturesConfig: AndroidLibraryConfig.AndroidBuildFeaturesConfig) =
+private fun AndroidLibraryExtension.setBuildFeatures(buildFeaturesConfig: AndroidLibraryConfig.AndroidBuildFeaturesConfig) =
     buildFeatures {
         androidResources = buildFeaturesConfig.generateAndroidResources
         resValues = buildFeaturesConfig.generateResValues
     }
 
-private fun LibraryExtension.setManifestPath(manifestPath: String) =
+private fun AndroidLibraryExtension.setManifestPath(manifestPath: String) =
     sourceSets {
         named("main") {
             manifest.srcFile(manifestPath)
         }
     }
 
-private fun LibraryExtension.setLibraryVariants(
+private fun AndroidLibraryExtension.setLibraryVariants(
     proguardFiles: Sequence<String>,
     generateBuildConfig: Boolean,
 ) = libraryVariants.all {

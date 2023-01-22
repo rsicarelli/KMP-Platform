@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     `kotlin-dsl`
     `maven-publish`
@@ -8,6 +6,7 @@ plugins {
 
 group = "com.rsicarelli.kmplatform"
 version = libs.versions.kmplatform.get()
+description = "Gradle Plugins with common Kotlin Multiplatform (KMP) decorations."
 
 dependencies {
     compileOnly(libs.gradlePlugin.kotlin)
@@ -41,16 +40,3 @@ publishing {
         }
     }
 }
-
-//tasks.withType<KotlinCompile>().configureEach {
-//    kotlinOptions {
-//        allWarningsAsErrors = false
-//        freeCompilerArgs = freeCompilerArgs + listOf("-opt-in=kotlin.RequiresOptIn")
-//        jvmTarget = "11"
-//    }
-//}
-//
-//extensions.configure<JavaPluginExtension> {
-//    sourceCompatibility = JavaVersion.VERSION_11
-//    targetCompatibility = JavaVersion.VERSION_11
-//}
