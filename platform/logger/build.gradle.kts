@@ -1,6 +1,6 @@
 @file:Suppress("DSL_SCOPE_VIOLATION")
 
-import decorators.ComponentPublication
+import config.PlatformPublicationTarget
 
 plugins {
     id("com.android.library")
@@ -11,7 +11,7 @@ plugins {
 version = libs.versions.kmplatform.get()
 description = "Common Multiplatform implementation for logging"
 
-installComponentPublication(ComponentPublication.Multiplatform)
+installComponentPublication(PlatformPublicationTarget.Multiplatform)
 installMultiplatformLibrary(
     commonMainDependencies = {
         api(libs.touchlab.kermit)

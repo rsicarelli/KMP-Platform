@@ -12,13 +12,13 @@ const val PROJECT_DEFAULTS_KEY = "com.rsicarelli.platform.gradle.plugins"
  *
  * @param key: default is [PROJECT_DEFAULTS_KEY]
  * */
-inline fun <reified T : Any> Project.requireDefaults(key: String = PROJECT_DEFAULTS_KEY): T =
+internal inline fun <reified T : Any> Project.requireDefaults(key: String = PROJECT_DEFAULTS_KEY): T =
     requireNotNull(getDefaults(key)) { "Defaults not found for type ${T::class}" }
 
-inline fun <reified T : Any> Project.getDefaults(key: String): T? =
+internal inline fun <reified T : Any> Project.getDefaults(key: String): T? =
     getDefaults(key) { it as? T }
 
-fun <T : Any> Project.getDefaults(key: String, mapper: (Any) -> T?): T? =
+internal fun <T : Any> Project.getDefaults(key: String, mapper: (Any) -> T?): T? =
     getDefaultsList(key)?.asSequence()?.mapNotNull(mapper)?.firstOrNull()
         ?: parent?.getDefaults(key, mapper)
 

@@ -1,9 +1,9 @@
 @file:Suppress("DSL_SCOPE_VIOLATION")
 
 import config.AndroidConfig.AndroidLibraryConfig
-import config.AndroidConfig.AndroidLibraryConfig.AndroidBuildFeaturesConfig
+import config.AndroidConfig.AndroidLibraryConfig.BuildFeaturesConfig
 import config.ComposeConfig
-import decorators.ComponentPublication
+import config.PlatformPublicationTarget
 
 plugins {
     id("com.android.library")
@@ -15,14 +15,14 @@ plugins {
 version = libs.versions.kmplatform.get()
 description = "Copan is the KMPlatform Design System with common Composable UI implementations."
 
-installComponentPublication(ComponentPublication.Multiplatform)
+installComponentPublication(PlatformPublicationTarget.Multiplatform)
 installMultiplatformLibrary(
     composeConfig = ComposeConfig(
         runtime = true,
         ui = true
     ),
     androidLibraryConfig = AndroidLibraryConfig(
-        buildFeaturesConfig = AndroidBuildFeaturesConfig(
+        buildFeaturesConfig = BuildFeaturesConfig(
             generateAndroidResources = true,
             generateResValues = true,
             generateBuildConfig = true

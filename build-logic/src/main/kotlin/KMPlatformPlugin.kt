@@ -4,8 +4,8 @@ import config.AndroidConfig.AndroidLibraryConfig
 import config.CompilationConfig
 import config.ComposeConfig
 import config.DesktopAppConfig
+import config.PlatformPublicationTarget
 import config.PublicationConfig
-import decorators.ComponentPublication
 import decorators.PROJECT_DEFAULTS_KEY
 import decorators.requireDefaults
 import decorators.setAndroidApp
@@ -58,9 +58,9 @@ fun Project.installDesktopApp(
 fun Project.installDetekt() = setDetekt()
 
 fun Project.installComponentPublication(
-    componentPublication: ComponentPublication,
+    publicationTarget: PlatformPublicationTarget,
     artifactId: String = name,
-) = setComponentPublication(componentPublication, artifactId)
+) = setComponentPublication(publicationTarget, artifactId)
 
 fun Project.installMultiplatformLibrary(
     compilationConfig: CompilationConfig = requireDefaults(),

@@ -22,7 +22,7 @@ internal fun Project.checkIsRootProject() {
     check(rootProject == this) { "Must be called on a root project" }
 }
 
-inline fun <reified T : Any> Project.withExtension(
+internal inline fun <reified T : Any> Project.withExtension(
     crossinline block: T.() -> Unit,
 ) {
     extensions.findByType<T>()?.let { it.block() }

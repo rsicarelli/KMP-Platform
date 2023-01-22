@@ -27,3 +27,9 @@ data class PublicationConfig(
         val password: String? = System.getenv("REMOTE_PASSWORD"),
     )
 }
+
+sealed interface PlatformPublicationTarget {
+    object Multiplatform : PlatformPublicationTarget
+    object Jvm : PlatformPublicationTarget
+    object Android : PlatformPublicationTarget
+}

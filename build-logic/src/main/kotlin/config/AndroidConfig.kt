@@ -1,7 +1,5 @@
 package config
 
-import org.gradle.internal.impldep.org.bouncycastle.util.StringList
-
 sealed class AndroidConfig(
     val lintOptions: LintOptions = LintOptions(),
     val variants: Sequence<String> = sequenceOf("debug", "release"),
@@ -38,14 +36,14 @@ sealed class AndroidConfig(
     data class AndroidLibraryConfig(
         val consumerProguardFiles: Sequence<String> = sequenceOf("consumer-rules.pro"),
         val manifestPath: String = "src/androidMain/AndroidManifest.xml",
-        val buildFeaturesConfig: AndroidBuildFeaturesConfig = AndroidBuildFeaturesConfig(),
+        val buildFeaturesConfig: BuildFeaturesConfig = BuildFeaturesConfig(),
         val ignoredSourceSets: Sequence<String> = sequenceOf(
             "androidAndroidTestRelease", "androidTestFixtures",
             "androidTestFixturesDebug", "androidTestFixturesRelease",
         ),
     ) : AndroidConfig() {
 
-        data class AndroidBuildFeaturesConfig(
+        data class BuildFeaturesConfig(
             val generateAndroidResources: Boolean = false,
             val generateResValues: Boolean = false,
             val generateBuildConfig: Boolean = false,

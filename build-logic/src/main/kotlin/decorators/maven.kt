@@ -1,10 +1,11 @@
 package decorators
 
 import config.AndroidConfig
+import config.PlatformPublicationTarget
+import config.PlatformPublicationTarget.Android
+import config.PlatformPublicationTarget.Jvm
+import config.PlatformPublicationTarget.Multiplatform
 import config.PublicationConfig
-import decorators.ComponentPublication.Android
-import decorators.ComponentPublication.Jvm
-import decorators.ComponentPublication.Multiplatform
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaPluginExtension
@@ -34,25 +35,15 @@ private fun Project.createJavadocJarTask(): Task =
         archiveClassifier.set("javadoc")
     }
 
-private fun Project.applyMavenPublish() {
-    plugins.apply("maven-publish")
-}
-
-sealed interface ComponentPublication {
-    object Multiplatform : ComponentPublication
-    object Jvm : ComponentPublication
-    object Android : ComponentPublication
-}
-
 internal fun Project.setComponentPublication(
-    componentPublication: ComponentPublication,
+    publicationTarget: PlatformPublicationTarget,
     artefactId: String,
     publicationConfig: PublicationConfig = requireDefaults(),
 ) {
-    applyMavenPublish()
+    plugins.apply("maven-publish")
     group = publicationConfig.group
 
-    when (componentPublication) {
+    when (publicationTarget) {
         Multiplatform -> setMultiplatformLibraryPublication(artefactId)
         Android -> setAndroidLibraryPublication(artefactId)
         Jvm -> setJvmLibraryPublication(artefactId)

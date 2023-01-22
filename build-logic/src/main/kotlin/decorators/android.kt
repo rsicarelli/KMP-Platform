@@ -70,7 +70,9 @@ private fun CommonExtension<*, *, *, *>.setLint(abortOnError: AndroidConfig.Lint
     lint { this.abortOnError = abortOnError.abortOnError }
 }
 
-private fun AndroidLibraryExtension.setBuildFeatures(buildFeaturesConfig: AndroidLibraryConfig.AndroidBuildFeaturesConfig) =
+private fun AndroidLibraryExtension.setBuildFeatures(
+    buildFeaturesConfig: AndroidLibraryConfig.BuildFeaturesConfig,
+) =
     buildFeatures {
         androidResources = buildFeaturesConfig.generateAndroidResources
         resValues = buildFeaturesConfig.generateResValues
