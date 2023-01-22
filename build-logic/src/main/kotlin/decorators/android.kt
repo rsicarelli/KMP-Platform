@@ -14,9 +14,9 @@ import org.gradle.api.Project
 import org.gradle.api.projectNamespace
 import org.gradle.api.withExtension
 
-typealias AndroidLibraryExtension = LibraryExtension
 typealias AndroidBaseExtension = BaseExtension
 typealias AndroidAppExtension = BaseAppModuleExtension
+typealias AndroidLibraryExtension = LibraryExtension
 
 internal fun Project.setAndroidApp(appConfig: AndroidAppConfig) = run {
     setAndroidCommon()
@@ -50,6 +50,8 @@ internal fun Project.setAndroidLibrary(libraryConfig: AndroidLibraryConfig) = ru
 private fun Project.setAndroidCommon(
     commonConfig: AndroidCommonConfig = requireDefaults(),
 ) = withExtension<AndroidBaseExtension> {
+    val isAppExtension = this is AndroidAppExtension
+
     namespace = projectNamespace
 
     commonConfig.run {
@@ -62,6 +64,21 @@ private fun Project.setAndroidCommon(
 
         packagingOptions {
             resources.excludes.addAll(commonConfig.packagingExcludes)
+        }
+
+        buildTypes {
+            commonConfig.variants.forEach { androidVariant ->
+                with(androidVariant) {
+                    getByName(name) {
+                        name
+                        isMinifyEnabled = minify
+                        if (isAppExtension) isShrinkResources = shrinkResources
+                        multiDexEnabled = multidex
+                        this.versionNameSuffix = this@with.versionNameSuffix
+                        this.isDebuggable = this@with.isDebuggable
+                    }
+                }
+            }
         }
     }
 }

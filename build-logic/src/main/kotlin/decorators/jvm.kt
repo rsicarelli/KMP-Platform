@@ -25,7 +25,6 @@ internal fun Project.setKotlinCompilation(compilationConfig: CompilationConfig) 
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
             allWarningsAsErrors = compilationConfig.allWarningsAsErrors
-            freeCompilerArgs = freeCompilerArgs + compilationConfig.extraFreeCompilerArgs
             jvmTarget = compilationConfig.jvmTarget
         }
     }

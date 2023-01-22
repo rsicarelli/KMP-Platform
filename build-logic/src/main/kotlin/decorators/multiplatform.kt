@@ -30,6 +30,14 @@ internal fun Project.setMultiplatformLibrary(
             named("androidMain") { dependencies(androidMainDependencies) }
             named("desktopMain") { dependencies(desktopMainDependencies) }
             removeAll { androidLibraryConfig.ignoredSourceSets.contains(it.name) }
+
+            all {
+                languageSettings {
+                    compilationConfig.featureOptInSequence.forEach {
+                        optIn(it.flag)
+                    }
+                }
+            }
         }
     }
 
