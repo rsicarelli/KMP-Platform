@@ -67,7 +67,7 @@ private fun Project.setAndroidCommon(
         }
 
         buildTypes {
-            commonConfig.variants.forEach { androidVariant ->
+            commonConfig.buildTypes.forEach { androidVariant ->
                 with(androidVariant) {
                     getByName(name) {
                         name

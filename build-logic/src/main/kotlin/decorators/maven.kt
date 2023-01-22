@@ -63,7 +63,7 @@ private fun Project.setMultiplatformLibraryPublication(artefactId: String) =
         publishing {
             multipleVariants(artefactId) {
                 with(requireDefaults<AndroidConfig>()) {
-                    variants.forEach {
+                    buildTypes.forEach {
                         includeBuildTypeValues(it.name)
                     }
                 }

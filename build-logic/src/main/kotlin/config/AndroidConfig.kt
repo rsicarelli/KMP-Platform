@@ -2,14 +2,14 @@ package config
 
 sealed class AndroidConfig(
     val lintOptions: LintOptions = LintOptions(),
-    val variants: Sequence<AndroidVariant> = sequenceOf(ReleaseVariant, DebugVariant),
+    val buildTypes: Sequence<AndroidBuildType> = sequenceOf(ReleaseBuildType, DebugBuildType),
 ) {
 
     data class LintOptions(
         val abortOnError: Boolean = false,
     )
 
-    interface AndroidVariant {
+    interface AndroidBuildType {
 
         val name: String
         val minify: Boolean
@@ -19,7 +19,7 @@ sealed class AndroidConfig(
         val multidex: Boolean
     }
 
-    object ReleaseVariant : AndroidVariant {
+    object ReleaseBuildType : AndroidBuildType {
 
         override val name: String = "release"
         override val minify: Boolean = true
@@ -29,7 +29,7 @@ sealed class AndroidConfig(
         override val multidex: Boolean = false
     }
 
-    object DebugVariant : AndroidVariant {
+    object DebugBuildType : AndroidBuildType {
 
         override val name: String = "debug"
         override val minify: Boolean = false
