@@ -30,7 +30,6 @@ internal inline fun <reified T : Any> Project.withExtension(
 
 internal val Project.projectNamespace: String
     get() {
-        val parentName = parent?.parent?.name?.lowercase()
-
-        return "com.rsicarelli.$parentName.$name"
+        val modulePath = path.split(":").joinToString(".") { it }
+        return "com.rsicarelli.$modulePath"
     }
