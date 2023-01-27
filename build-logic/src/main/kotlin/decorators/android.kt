@@ -11,7 +11,6 @@ import config.AndroidConfig.AndroidAppConfig
 import config.AndroidConfig.AndroidCommonConfig
 import config.AndroidConfig.AndroidLibraryConfig
 import org.gradle.api.Project
-import org.gradle.api.projectNamespace
 import org.gradle.api.withExtension
 
 typealias AndroidBaseExtension = BaseExtension
@@ -82,6 +81,12 @@ private fun Project.setAndroidCommon(
         }
     }
 }
+
+private val Project.projectNamespace: String
+    get() {
+        val modulePath = path.split(":").joinToString(".") { it }
+        return "$group$modulePath"
+    }
 
 private fun CommonExtension<*, *, *, *>.setLint(abortOnError: AndroidConfig.LintOptions) {
     lint { this.abortOnError = abortOnError.abortOnError }

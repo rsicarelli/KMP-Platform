@@ -27,9 +27,3 @@ internal inline fun <reified T : Any> Project.withExtension(
 ) {
     extensions.findByType<T>()?.let { it.block() }
 }
-
-internal val Project.projectNamespace: String
-    get() {
-        val modulePath = path.split(":").joinToString(".") { it }
-        return "com.rsicarelli.$modulePath"
-    }
