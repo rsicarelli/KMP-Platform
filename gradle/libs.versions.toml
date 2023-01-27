@@ -20,6 +20,10 @@ accompanist = "0.28.0"
 kmplatform = "0.1"
 
 [libraries]
+# KMPlatform
+rsicarelli-kmplatform-copan = { module = "com.rsicarelli.kmplatform:copan", version.ref = "kmplatform" }
+rsicarelli-kmplatform-logger = { module = "com.rsicarelli.kmplatform:logger", version.ref = "kmplatform" }
+rsicarelli-kmplatform-threading = { module = "com.rsicarelli.kmplatform:threading", version.ref = "kmplatform" }
 
 #Gradle Plugins
 gradlePlugin-android = { module = "com.android.tools.build:gradle", version.ref = "androidBuildTools" }

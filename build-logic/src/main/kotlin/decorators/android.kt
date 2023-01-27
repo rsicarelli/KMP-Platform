@@ -85,7 +85,7 @@ private fun Project.setAndroidCommon(
 private val Project.projectNamespace: String
     get() {
         val modulePath = path.split(":").joinToString(".") { it }
-        return "$group$modulePath"
+        return "${rootProject.group}$modulePath"
     }
 
 private fun CommonExtension<*, *, *, *>.setLint(abortOnError: AndroidConfig.LintOptions) {

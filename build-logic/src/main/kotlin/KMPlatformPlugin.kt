@@ -52,8 +52,9 @@ fun Project.installAndroidApp(
 )
 
 fun Project.installDesktopApp(
-    desktopAppConfig: DesktopAppConfig,
-) = setDesktopApp(desktopAppConfig)
+    desktopAppConfig: DesktopAppConfig = requireDefaults(),
+    jvmDependencyHandler: KotlinDependencyHandler.() -> Unit = {},
+) = setDesktopApp(desktopAppConfig, jvmDependencyHandler)
 
 fun Project.installDetekt() = setDetekt()
 
