@@ -1,11 +1,3 @@
-import config.AndroidConfig.AndroidAppConfig
-import config.AndroidConfig.AndroidCommonConfig
-import config.AndroidConfig.AndroidLibraryConfig
-import config.CompilationConfig
-import config.ComposeConfig
-import config.DesktopAppConfig
-import config.PlatformPublicationTarget
-import config.PublicationConfig
 import decorators.PROJECT_DEFAULTS_KEY
 import decorators.requireDefaults
 import decorators.setAndroidApp
@@ -26,9 +18,7 @@ class KMPlatformPlugin : Plugin<Project> {
 fun Project.installDefaults(
     androidAppConfig: AndroidAppConfig? = null,
     desktopAppConfig: DesktopAppConfig? = null,
-    androidCommonConfig: AndroidCommonConfig = AndroidCommonConfig(),
-    androidLibraryConfig: AndroidLibraryConfig = AndroidLibraryConfig(),
-    compilationConfig: CompilationConfig = CompilationConfig(),
+    multiplatformLibraryConfig: MultiplatformLibraryConfig,
     publicationConfig: PublicationConfig = PublicationConfig(
         group = group.toString(),
         remoteName = name,
@@ -37,21 +27,17 @@ fun Project.installDefaults(
     /* name = */ PROJECT_DEFAULTS_KEY,
     /* value = */ listOfNotNull(
         desktopAppConfig,
-        androidCommonConfig,
-        androidLibraryConfig,
+        multiplatformLibraryConfig,
         androidAppConfig,
-        compilationConfig,
         publicationConfig
     )
 )
 
 fun Project.installAndroidApp(
     androidAppConfig: AndroidAppConfig = requireDefaults(),
-    androidCommonConfig: AndroidCommonConfig = requireDefaults(),
     compilationConfig: CompilationConfig = requireDefaults(),
 ) = setAndroidApp(
     appConfig = androidAppConfig,
-    commonConfig = androidCommonConfig,
     compilationConfig = compilationConfig
 )
 
@@ -65,22 +51,12 @@ fun Project.installDetekt() = setDetekt()
 fun Project.installComponentPublication(
     publicationTarget: PlatformPublicationTarget,
     artifactId: String = name,
-) = setComponentPublication(publicationTarget, artifactId)
+    publicationConfig: PublicationConfig = requireDefaults(),
+) = setComponentPublication(publicationTarget, artifactId, publicationConfig)
 
 fun Project.installMultiplatformLibrary(
-    compilationConfig: CompilationConfig = requireDefaults(),
-    androidLibraryConfig: AndroidLibraryConfig = requireDefaults(),
-    androidCommonConfig: AndroidCommonConfig = requireDefaults(),
-    composeConfig: ComposeConfig? = null,
-    commonMainDependencies: KotlinDependencyHandler.() -> Unit = { },
-    androidMainDependencies: KotlinDependencyHandler.() -> Unit = { },
-    desktopMainDependencies: KotlinDependencyHandler.() -> Unit = { },
+    multiplatformLibraryConfig: MultiplatformLibraryConfig = requireDefaults(),
+    multiplatformDependencyHandler: MultiplatformDependencyHandler,
 ) = setMultiplatformLibrary(
-    compilationConfig = compilationConfig,
-    androidLibraryConfig = androidLibraryConfig,
-    androidCommonConfig = androidCommonConfig,
-    composeConfig = composeConfig,
-    commonMainDependencies = commonMainDependencies,
-    androidMainDependencies = androidMainDependencies,
-    desktopMainDependencies = desktopMainDependencies,
+    multiplatformLibraryConfig, multiplatformDependencyHandler
 )

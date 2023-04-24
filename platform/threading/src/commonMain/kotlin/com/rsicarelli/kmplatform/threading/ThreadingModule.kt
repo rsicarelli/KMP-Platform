@@ -2,6 +2,7 @@ package com.rsicarelli.kmplatform.threading
 
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import org.kodein.di.DI
 import org.kodein.di.bind
 import org.kodein.di.singleton

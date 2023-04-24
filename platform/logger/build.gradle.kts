@@ -1,5 +1,3 @@
-import config.PlatformPublicationTarget
-
 plugins {
     id("com.android.library")
     kotlin("multiplatform")
@@ -11,7 +9,9 @@ description = "Common Multiplatform implementation for logging"
 
 installComponentPublication(PlatformPublicationTarget.Multiplatform)
 installMultiplatformLibrary(
-    commonMainDependencies = {
-        api(libs.touchlab.kermit)
-    }
+    multiplatformDependencyHandler = MultiplatformDependencyHandler(
+        common = {
+            api(libs.touchlab.kermit)
+        }
+    )
 )

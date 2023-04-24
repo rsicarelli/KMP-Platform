@@ -23,9 +23,6 @@ fun CopanResource(
     }
 }
 
-@Stable
-expect val SpikeBackground: CopanResource
-
 
 
 

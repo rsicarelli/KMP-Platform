@@ -1,11 +1,11 @@
 package decorators
 
-import config.AndroidConfig
-import config.PlatformPublicationTarget
-import config.PlatformPublicationTarget.Android
-import config.PlatformPublicationTarget.Jvm
-import config.PlatformPublicationTarget.Multiplatform
-import config.PublicationConfig
+import MultiplatformLibraryConfig
+import PlatformPublicationTarget
+import PlatformPublicationTarget.Android
+import PlatformPublicationTarget.Jvm
+import PlatformPublicationTarget.Multiplatform
+import PublicationConfig
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaPluginExtension
@@ -38,7 +38,7 @@ private fun Project.createJavadocJarTask(): Task =
 internal fun Project.setComponentPublication(
     publicationTarget: PlatformPublicationTarget,
     artefactId: String,
-    publicationConfig: PublicationConfig = requireDefaults(),
+    publicationConfig: PublicationConfig,
 ) {
     plugins.apply("maven-publish")
     group = publicationConfig.group
@@ -62,8 +62,8 @@ private fun Project.setMultiplatformLibraryPublication(artefactId: String) =
     withExtension<AndroidLibraryExtension> {
         publishing {
             multipleVariants(artefactId) {
-                with(requireDefaults<AndroidConfig>()) {
-                    buildTypes.forEach {
+                with(requireDefaults<MultiplatformLibraryConfig>()) {
+                    this.androidLibraryConfig.buildTypes.forEach {
                         includeBuildTypeValues(it.name)
                     }
                 }

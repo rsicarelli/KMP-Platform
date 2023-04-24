@@ -4,6 +4,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -73,6 +74,7 @@ private val DarkColors = darkColorScheme(
 fun CopanTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
     colors: ColorScheme = if (useDarkTheme) DarkColors else LightColors,
+    typography: Typography,
     content: @Composable () -> Unit,
 ) {
 
@@ -84,7 +86,7 @@ fun CopanTheme(
     )
 
     MaterialTheme(
-        typography = AppTypography,
+        typography = typography,
         colorScheme = colors,
     ) {
         Surface(content = content)

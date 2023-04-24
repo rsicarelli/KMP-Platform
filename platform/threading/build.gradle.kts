@@ -1,5 +1,3 @@
-import config.PlatformPublicationTarget
-
 plugins {
     id("com.android.library")
     kotlin("multiplatform")
@@ -11,8 +9,10 @@ description = "Common multiplatform implementations for Coroutines."
 
 installComponentPublication(PlatformPublicationTarget.Multiplatform)
 installMultiplatformLibrary(
-    commonMainDependencies = {
-        api(libs.jetbrains.kotlinx.coroutines.core)
-        compileOnly(libs.kodein.di)
-    }
+    multiplatformDependencyHandler = MultiplatformDependencyHandler(
+        common = {
+            api(libs.jetbrains.kotlinx.coroutines.core)
+            implementation(libs.kodein.di)
+        }
+    ),
 )

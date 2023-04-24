@@ -1,5 +1,3 @@
-package config
-
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 data class DesktopAppConfig(

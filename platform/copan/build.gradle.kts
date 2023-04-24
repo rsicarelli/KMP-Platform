@@ -1,8 +1,3 @@
-import config.AndroidConfig.AndroidLibraryConfig
-import config.AndroidConfig.AndroidLibraryConfig.BuildFeaturesConfig
-import config.ComposeConfig
-import config.PlatformPublicationTarget
-
 plugins {
     id("com.android.library")
     kotlin("multiplatform")
@@ -15,27 +10,18 @@ description = "Copan is the KMPlatform Design System with common Composable UI i
 
 installComponentPublication(PlatformPublicationTarget.Multiplatform)
 installMultiplatformLibrary(
-    composeConfig = ComposeConfig(
-        runtime = true,
-        ui = true
-    ),
-    androidLibraryConfig = AndroidLibraryConfig(
-        buildFeaturesConfig = BuildFeaturesConfig(
-            generateAndroidResources = true,
-            generateResValues = true,
-            generateBuildConfig = true
-        )
-    ),
-    commonMainDependencies = {
-        api(compose.dependencies.materialIconsExtended)
-        api(compose.dependencies.material3)
-    },
-    androidMainDependencies = {
-        compileOnly(libs.androidx.core)
-        implementation(libs.google.accompanist.systemuicontroller)
-        implementation(libs.coil.compose)
-    },
-    desktopMainDependencies = {
-        implementation(libs.load.the.image)
-    },
+    multiplatformDependencyHandler = MultiplatformDependencyHandler(
+        common = {
+            api(compose.dependencies.materialIconsExtended)
+            api(compose.dependencies.material3)
+        },
+        android = {
+            implementation(libs.androidx.core)
+            implementation(libs.google.accompanist.systemuicontroller)
+            implementation(libs.coil.compose)
+        },
+        desktop = {
+            implementation(libs.load.the.image)
+        },
+    )
 )

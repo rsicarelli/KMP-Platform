@@ -1,5 +1,3 @@
-package config
-
 data class PublicationConfig(
     val group: String,
     val remoteName: String,

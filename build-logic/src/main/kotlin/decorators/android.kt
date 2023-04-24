@@ -6,13 +6,13 @@ import com.android.build.api.dsl.ApplicationBuildType
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.LibraryBuildType
 import com.android.build.gradle.LibraryExtension
-import config.AndroidConfig
-import config.AndroidConfig.AndroidAppConfig
-import config.AndroidConfig.AndroidBuildType
-import config.AndroidConfig.AndroidCommonConfig
-import config.AndroidConfig.AndroidLibraryConfig
-import config.AndroidConfig.DebugBuildType
-import config.CompilationConfig
+import AndroidAppConfig
+import AndroidBuildType
+import AndroidConfig
+import AndroidLibraryConfig
+import CompilationConfig
+import DebugBuildType
+import ReleaseBuildType
 import org.gradle.api.Project
 import org.gradle.api.androidCommonExtension
 import org.gradle.api.projectNamespace
@@ -22,7 +22,7 @@ typealias AndroidAppExtension = ApplicationExtension
 typealias AndroidLibraryExtension = LibraryExtension
 
 private fun Project.setAndroidCommon(
-    commonConfig: AndroidCommonConfig,
+    commonConfig: AndroidConfig,
     compilationConfig: CompilationConfig,
 ) = androidCommonExtension {
     namespace = projectNamespace
@@ -47,23 +47,22 @@ private fun Project.setAndroidCommon(
 
 internal fun Project.setAndroidApp(
     appConfig: AndroidAppConfig,
-    commonConfig: AndroidCommonConfig,
     compilationConfig: CompilationConfig,
 ) = run {
-    setAndroidCommon(commonConfig, compilationConfig)
+    setAndroidCommon(appConfig, compilationConfig)
     withExtension<AndroidAppExtension> {
         defaultConfig {
-            targetSdk = commonConfig.targetSdkVersion
+            targetSdk = appConfig.targetSdkVersion
             applicationId = appConfig.id
             versionCode = appConfig.version.code
             versionName = appConfig.version.formattedName
         }
 
         buildTypes {
-            commonConfig.buildTypes.forEach { androidBuildType ->
+            appConfig.buildTypes.forEach { androidBuildType ->
                 when (androidBuildType) {
                     DebugBuildType -> debug { applyFrom(androidBuildType) }
-                    AndroidConfig.ReleaseBuildType -> release { applyFrom(androidBuildType) }
+                    ReleaseBuildType -> release { applyFrom(androidBuildType) }
                     else -> getByName(androidBuildType.name) { applyFrom(androidBuildType) }
                 }
             }
@@ -73,28 +72,29 @@ internal fun Project.setAndroidApp(
 
 internal fun Project.setAndroidLibrary(
     libraryConfig: AndroidLibraryConfig,
-    commonConfig: AndroidCommonConfig,
     compilationConfig: CompilationConfig,
 ) = run {
-    setAndroidCommon(commonConfig, compilationConfig)
+    setAndroidCommon(libraryConfig, compilationConfig)
     withExtension<AndroidLibraryExtension> {
-        compileSdk = commonConfig.compileSdkVersion
+        compileSdk = libraryConfig.compileSdkVersion
         defaultConfig {
-            aarMetadata.minCompileSdk = commonConfig.minSdkVersion
+            aarMetadata.minCompileSdk = libraryConfig.minSdkVersion
             libraryConfig.consumerProguardFiles.forEach {
                 consumerProguardFile(it)
             }
         }
         sourceSets {
-            getByName("main") {
+            getByName(libraryConfig.sourceSetName) {
                 manifest.srcFile(libraryConfig.manifestPath)
+//                res.srcDirs(libraryConfig.resPath)
+//                resources.srcDirs(libraryConfig.resourcesPath)
             }
         }
         buildTypes {
-            commonConfig.buildTypes.forEach { androidBuildType ->
+            libraryConfig.buildTypes.forEach { androidBuildType ->
                 when (androidBuildType) {
                     DebugBuildType -> debug { applyFrom(androidBuildType) }
-                    AndroidConfig.ReleaseBuildType -> release { applyFrom(androidBuildType) }
+                    ReleaseBuildType -> release { applyFrom(androidBuildType) }
                     else -> getByName(androidBuildType.name) { applyFrom(androidBuildType) }
                 }
             }
@@ -102,7 +102,11 @@ internal fun Project.setAndroidLibrary(
         buildFeatures {
             androidResources = libraryConfig.buildFeaturesConfig.generateAndroidResources
             resValues = libraryConfig.buildFeaturesConfig.generateResValues
-            buildConfig = libraryConfig.buildFeaturesConfig.generateBuildConfig
+//            buildConfig = libraryConfig.buildFeaturesConfig.generateBuildConfig
+        }
+        libraryVariants.all {
+            generateBuildConfigProvider.get().enabled = libraryConfig.buildFeaturesConfig.generateBuildConfig
+
         }
         lint { abortOnError = libraryConfig.lintOptions.abortOnError }
     }

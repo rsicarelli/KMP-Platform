@@ -18,5 +18,11 @@ plugins {
 group = "com.rsicarelli.kmplatform"
 version = libs.versions.kmplatform.get()
 
-installDefaults()
+installDefaults(
+    multiplatformLibraryConfig = MultiplatformLibraryConfig(
+        androidLibraryConfig = AndroidLibraryConfig(),
+        iOSConfig = iOSLibraryConfig(),
+        compilationConfig = CompilationConfig(),
+    ),
+)
 installDetekt()

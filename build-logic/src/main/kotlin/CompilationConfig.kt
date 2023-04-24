@@ -1,5 +1,3 @@
-package config
-
 import org.gradle.api.JavaVersion
 
 data class CompilationConfig(

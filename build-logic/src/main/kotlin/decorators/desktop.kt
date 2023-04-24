@@ -1,6 +1,6 @@
 package decorators
 
-import config.DesktopAppConfig
+import DesktopAppConfig
 import org.gradle.api.Project
 import org.gradle.api.compose
 import org.gradle.kotlin.dsl.configure
