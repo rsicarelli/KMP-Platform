@@ -1,5 +1,3 @@
-@file:Suppress("DSL_SCOPE_VIOLATION")
-
 import config.AndroidConfig.AndroidLibraryConfig
 import config.AndroidConfig.AndroidLibraryConfig.BuildFeaturesConfig
 import config.ComposeConfig
