@@ -4,7 +4,6 @@ detekt = "1.22.0"
 jetbrainsCompose = "1.4.0"
 kotlin = "1.8.20"
 decompose = "2.0.0-alpha-02"
-essenty = "0.10.0"
 coroutines = "1.7.0-RC"
 jetbrainsKotlinxSerialization = "1.5.0"
 androidxCore = "1.9.0"
@@ -17,7 +16,7 @@ sqlDelight = "1.5.5"
 loadTheImage = "1.0.5"
 coilCompose = "2.3.0"
 accompanist = "0.30.1"
-kmplatform = "0.1"
+kmplatform = "0.2-dev01"
 
 [libraries]
 # KMPlatform

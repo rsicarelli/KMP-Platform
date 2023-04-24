@@ -2,120 +2,123 @@
 
 package decorators
 
-import com.android.build.api.dsl.CommonExtension
-import com.android.build.gradle.BaseExtension
+import com.android.build.api.dsl.ApplicationBuildType
+import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.dsl.LibraryBuildType
 import com.android.build.gradle.LibraryExtension
-import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
 import config.AndroidConfig
 import config.AndroidConfig.AndroidAppConfig
+import config.AndroidConfig.AndroidBuildType
 import config.AndroidConfig.AndroidCommonConfig
 import config.AndroidConfig.AndroidLibraryConfig
+import config.AndroidConfig.DebugBuildType
+import config.CompilationConfig
 import org.gradle.api.Project
+import org.gradle.api.androidCommonExtension
+import org.gradle.api.projectNamespace
 import org.gradle.api.withExtension
 
-typealias AndroidBaseExtension = BaseExtension
-typealias AndroidAppExtension = BaseAppModuleExtension
+typealias AndroidAppExtension = ApplicationExtension
 typealias AndroidLibraryExtension = LibraryExtension
 
-internal fun Project.setAndroidApp(appConfig: AndroidAppConfig) = run {
-    setAndroidCommon()
-    withExtension<AndroidAppExtension> {
-        appConfig.run {
-            defaultConfig {
-                applicationId = id
-                versionCode = version.code
-                versionName = version.formattedName
-            }
-            setLint(lintOptions)
-        }
-    }
-}
-
-internal fun Project.setAndroidLibrary(libraryConfig: AndroidLibraryConfig) = run {
-    setAndroidCommon()
-    withExtension<AndroidLibraryExtension> {
-        libraryConfig.run {
-            setManifestPath(manifestPath = manifestPath)
-            setBuildFeatures(buildFeaturesConfig = buildFeaturesConfig)
-            setLint(abortOnError = libraryConfig.lintOptions)
-            setLibraryVariants(
-                proguardFiles = libraryConfig.consumerProguardFiles,
-                generateBuildConfig = libraryConfig.buildFeaturesConfig.generateBuildConfig
-            )
-        }
-    }
-}
-
 private fun Project.setAndroidCommon(
-    commonConfig: AndroidCommonConfig = requireDefaults(),
-) = withExtension<AndroidBaseExtension> {
-    val isAppExtension = this is AndroidAppExtension
-
+    commonConfig: AndroidCommonConfig,
+    compilationConfig: CompilationConfig,
+) = androidCommonExtension {
     namespace = projectNamespace
+    compileSdk = commonConfig.compileSdkVersion
 
-    commonConfig.run {
-        compileSdkVersion(compileSdkVersion)
+    defaultConfig {
+        minSdk = commonConfig.minSdkVersion
+    }
 
-        defaultConfig {
-            minSdk = this@run.minSdkVersion
-            targetSdk = this@run.targetSdkVersion
-            aarMetadata.minCompileSdk = this@run.minSdkVersion
-        }
+    compileOptions {
+        sourceCompatibility = compilationConfig.javaVersion
+        targetCompatibility = compilationConfig.javaVersion
+    }
 
+    if (commonConfig.packagingExcludes.isNotEmpty()) {
         packagingOptions {
             resources.excludes.addAll(commonConfig.packagingExcludes)
         }
+    }
+    lint {
+        abortOnError = commonConfig.lintOptions.abortOnError
+    }
+}
+
+internal fun Project.setAndroidApp(
+    appConfig: AndroidAppConfig,
+    commonConfig: AndroidCommonConfig,
+    compilationConfig: CompilationConfig,
+) = run {
+    setAndroidCommon(commonConfig, compilationConfig)
+    withExtension<AndroidAppExtension> {
+        defaultConfig {
+            targetSdk = commonConfig.targetSdkVersion
+            applicationId = appConfig.id
+            versionCode = appConfig.version.code
+            versionName = appConfig.version.formattedName
+        }
 
         buildTypes {
-            commonConfig.buildTypes.forEach { androidVariant ->
-                with(androidVariant) {
-                    getByName(name) {
-                        isMinifyEnabled = minify
-                        if (isAppExtension) isShrinkResources = shrinkResources
-                        multiDexEnabled = multidex
-                        this.versionNameSuffix = this@with.versionNameSuffix
-                        this.isDebuggable = this@with.isDebuggable
-                    }
+            commonConfig.buildTypes.forEach { androidBuildType ->
+                when (androidBuildType) {
+                    DebugBuildType -> debug { applyFrom(androidBuildType) }
+                    AndroidConfig.ReleaseBuildType -> release { applyFrom(androidBuildType) }
+                    else -> getByName(androidBuildType.name) { applyFrom(androidBuildType) }
                 }
             }
         }
     }
 }
 
-private val Project.projectNamespace: String
-    get() {
-        val modulePath = path.split(":").joinToString(".") { it }
-        return "${rootProject.group}$modulePath"
-    }
-
-private fun CommonExtension<*, *, *, *>.setLint(abortOnError: AndroidConfig.LintOptions) {
-    lint { this.abortOnError = abortOnError.abortOnError }
-}
-
-private fun AndroidLibraryExtension.setBuildFeatures(
-    buildFeaturesConfig: AndroidLibraryConfig.BuildFeaturesConfig,
-) =
-    buildFeatures {
-        androidResources = buildFeaturesConfig.generateAndroidResources
-        resValues = buildFeaturesConfig.generateResValues
-    }
-
-private fun AndroidLibraryExtension.setManifestPath(manifestPath: String) =
-    sourceSets {
-        named("main") {
-            manifest.srcFile(manifestPath)
-        }
-    }
-
-private fun AndroidLibraryExtension.setLibraryVariants(
-    proguardFiles: Sequence<String>,
-    generateBuildConfig: Boolean,
-) = libraryVariants.all {
-    buildTypes {
+internal fun Project.setAndroidLibrary(
+    libraryConfig: AndroidLibraryConfig,
+    commonConfig: AndroidCommonConfig,
+    compilationConfig: CompilationConfig,
+) = run {
+    setAndroidCommon(commonConfig, compilationConfig)
+    withExtension<AndroidLibraryExtension> {
+        compileSdk = commonConfig.compileSdkVersion
         defaultConfig {
-            consumerProguardFiles(proguardFiles.first())
+            aarMetadata.minCompileSdk = commonConfig.minSdkVersion
+            libraryConfig.consumerProguardFiles.forEach {
+                consumerProguardFile(it)
+            }
         }
+        sourceSets {
+            getByName("main") {
+                manifest.srcFile(libraryConfig.manifestPath)
+            }
+        }
+        buildTypes {
+            commonConfig.buildTypes.forEach { androidBuildType ->
+                when (androidBuildType) {
+                    DebugBuildType -> debug { applyFrom(androidBuildType) }
+                    AndroidConfig.ReleaseBuildType -> release { applyFrom(androidBuildType) }
+                    else -> getByName(androidBuildType.name) { applyFrom(androidBuildType) }
+                }
+            }
+        }
+        buildFeatures {
+            androidResources = libraryConfig.buildFeaturesConfig.generateAndroidResources
+            resValues = libraryConfig.buildFeaturesConfig.generateResValues
+            buildConfig = libraryConfig.buildFeaturesConfig.generateBuildConfig
+        }
+        lint { abortOnError = libraryConfig.lintOptions.abortOnError }
     }
-    generateBuildConfigProvider.get().enabled = generateBuildConfig
 }
 
+private fun ApplicationBuildType.applyFrom(androidBuildType: AndroidBuildType) {
+    isDebuggable = androidBuildType.isDebuggable
+    isMinifyEnabled = androidBuildType.isMinifyEnabled
+    isShrinkResources = androidBuildType.shrinkResources
+    multiDexEnabled = androidBuildType.multidex
+    versionNameSuffix = androidBuildType.versionNameSuffix
+}
+
+private fun LibraryBuildType.applyFrom(androidBuildType: AndroidBuildType) {
+    isMinifyEnabled = androidBuildType.isMinifyEnabled
+    multiDexEnabled = androidBuildType.multidex
+}

@@ -2,7 +2,7 @@ package config
 
 sealed class AndroidConfig(
     val lintOptions: LintOptions = LintOptions(),
-    val buildTypes: Sequence<AndroidBuildType> = sequenceOf(ReleaseBuildType, DebugBuildType),
+    val buildTypes: List<AndroidBuildType> = listOf(ReleaseBuildType, DebugBuildType),
 ) {
 
     data class LintOptions(
@@ -12,7 +12,7 @@ sealed class AndroidConfig(
     interface AndroidBuildType {
 
         val name: String
-        val minify: Boolean
+        val isMinifyEnabled: Boolean
         val shrinkResources: Boolean
         val versionNameSuffix: String?
         val isDebuggable: Boolean
@@ -22,7 +22,7 @@ sealed class AndroidConfig(
     object ReleaseBuildType : AndroidBuildType {
 
         override val name: String = "release"
-        override val minify: Boolean = true
+        override val isMinifyEnabled: Boolean = true
         override val shrinkResources: Boolean = true
         override val versionNameSuffix: String? = null
         override val isDebuggable: Boolean = false
@@ -32,7 +32,7 @@ sealed class AndroidConfig(
     object DebugBuildType : AndroidBuildType {
 
         override val name: String = "debug"
-        override val minify: Boolean = false
+        override val isMinifyEnabled: Boolean = false
         override val shrinkResources: Boolean = false
         override val versionNameSuffix: String = "debug"
         override val isDebuggable: Boolean = true
@@ -70,10 +70,10 @@ sealed class AndroidConfig(
     }
 
     data class AndroidLibraryConfig(
-        val consumerProguardFiles: Sequence<String> = sequenceOf("consumer-rules.pro"),
+        val consumerProguardFiles: List<String> = listOf("consumer-rules.pro"),
         val manifestPath: String = "src/androidMain/AndroidManifest.xml",
         val buildFeaturesConfig: BuildFeaturesConfig = BuildFeaturesConfig(),
-        val ignoredSourceSets: Sequence<String> = sequenceOf(
+        val ignoredSourceSets: List<String> = listOf(
             "androidAndroidTestRelease", "androidTestFixtures",
             "androidTestFixturesDebug", "androidTestFixturesRelease",
         ),

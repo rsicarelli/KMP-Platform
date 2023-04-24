@@ -2,6 +2,7 @@
 
 package decorators
 
+import config.AndroidConfig
 import config.AndroidConfig.AndroidLibraryConfig
 import config.CompilationConfig
 import config.ComposeConfig
@@ -9,12 +10,12 @@ import org.gradle.api.Project
 import org.gradle.api.compose
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.invoke
-import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
 internal fun Project.setMultiplatformLibrary(
     androidLibraryConfig: AndroidLibraryConfig,
+    androidCommonConfig: AndroidConfig.AndroidCommonConfig,
     compilationConfig: CompilationConfig,
     composeConfig: ComposeConfig?,
     commonMainDependencies: KotlinDependencyHandler.() -> Unit,
@@ -33,7 +34,7 @@ internal fun Project.setMultiplatformLibrary(
 
             all {
                 languageSettings {
-                    compilationConfig.featureOptInSequence.forEach {
+                    compilationConfig.featureOptIns.forEach {
                         optIn(it.flag)
                     }
                 }
@@ -42,32 +43,29 @@ internal fun Project.setMultiplatformLibrary(
     }
 
     composeConfig?.let(::setComposeMultiplatform)
-    setKotlinCompilation(compilationConfig)
-    setAndroidLibrary(androidLibraryConfig)
+    setAndroidLibrary(androidLibraryConfig, androidCommonConfig, compilationConfig)
     setJUnit5()
 }
 
-@OptIn(ExperimentalComposeLibrary::class)
 private fun Project.setComposeMultiplatform(composeConfig: ComposeConfig) {
     extensions.configure<KotlinMultiplatformExtension> {
-        pluginManager.apply {
-            apply("org.jetbrains.compose")
-        }
-
         sourceSets {
             named("commonMain") {
                 dependencies {
                     if (composeConfig.runtime)
-                        compileOnly(compose.dependencies.runtime)
+                        implementation(compose.dependencies.runtime)
                     if (composeConfig.ui) {
-                        compileOnly(compose.dependencies.foundation)
-                        compileOnly(compose.dependencies.material3)
+                        implementation(compose.dependencies.foundation)
+                        implementation(compose.dependencies.material3)
+                        compileOnly(compose.dependencies.uiTooling)
+                        compileOnly(compose.dependencies.preview)
                     }
                 }
             }
             named("desktopMain") {
                 dependencies {
-                    if (composeConfig.ui) compileOnly(compose.dependencies.desktop.common)
+                    if (composeConfig.ui)
+                        implementation(compose.dependencies.desktop.common)
                 }
             }
         }

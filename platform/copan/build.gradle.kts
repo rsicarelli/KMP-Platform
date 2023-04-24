@@ -28,6 +28,7 @@ installMultiplatformLibrary(
     ),
     commonMainDependencies = {
         api(compose.dependencies.materialIconsExtended)
+        api(compose.dependencies.material3)
     },
     androidMainDependencies = {
         compileOnly(libs.androidx.core)

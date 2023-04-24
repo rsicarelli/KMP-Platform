@@ -6,11 +6,11 @@ data class CompilationConfig(
     val javaVersion: JavaVersion = JavaVersion.VERSION_11,
     val jvmTarget: String = "11",
     val allWarningsAsErrors: Boolean = false,
-    val featureOptInSequence: Sequence<FeatureOptIn> = sequenceOf(),
+    val featureOptIns: List<FeatureOptIn> = listOf(),
 ) {
 
     val extraFreeCompilerArgs: List<String>
-        get() = featureOptInSequence.map { "-opt-in=${it.flag}" }.toList()
+        get() = featureOptIns.map { "-opt-in=${it.flag}" }.toList()
 
     enum class FeatureOptIn(val flag: String) {
 

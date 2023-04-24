@@ -47,8 +47,12 @@ fun Project.installDefaults(
 
 fun Project.installAndroidApp(
     androidAppConfig: AndroidAppConfig = requireDefaults(),
+    androidCommonConfig: AndroidCommonConfig = requireDefaults(),
+    compilationConfig: CompilationConfig = requireDefaults(),
 ) = setAndroidApp(
     appConfig = androidAppConfig,
+    commonConfig = androidCommonConfig,
+    compilationConfig = compilationConfig
 )
 
 fun Project.installDesktopApp(
@@ -66,6 +70,7 @@ fun Project.installComponentPublication(
 fun Project.installMultiplatformLibrary(
     compilationConfig: CompilationConfig = requireDefaults(),
     androidLibraryConfig: AndroidLibraryConfig = requireDefaults(),
+    androidCommonConfig: AndroidCommonConfig = requireDefaults(),
     composeConfig: ComposeConfig? = null,
     commonMainDependencies: KotlinDependencyHandler.() -> Unit = { },
     androidMainDependencies: KotlinDependencyHandler.() -> Unit = { },
@@ -73,6 +78,7 @@ fun Project.installMultiplatformLibrary(
 ) = setMultiplatformLibrary(
     compilationConfig = compilationConfig,
     androidLibraryConfig = androidLibraryConfig,
+    androidCommonConfig = androidCommonConfig,
     composeConfig = composeConfig,
     commonMainDependencies = commonMainDependencies,
     androidMainDependencies = androidMainDependencies,
