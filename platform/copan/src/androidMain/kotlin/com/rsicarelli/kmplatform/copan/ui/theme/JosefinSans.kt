@@ -3,7 +3,7 @@ package com.rsicarelli.kmplatform.copan.ui.theme
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import com.rsicarelli.kmplatform.copan.R
+import com.rsicarelli.kmplatform.platform.copan.R
 
 actual val JosefinSans: FontFamily = FontFamily(
     Font(R.font.josefin_sans_regular, FontWeight.Normal),

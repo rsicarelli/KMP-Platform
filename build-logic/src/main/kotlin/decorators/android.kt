@@ -55,10 +55,11 @@ private fun Project.setAndroidCommon(
 
     commonConfig.run {
         compileSdkVersion(compileSdkVersion)
-        defaultConfig.minSdk = minSdkVersion
-        defaultConfig.targetSdk = targetSdkVersion
-        defaultConfig.aarMetadata {
-            minCompileSdk = minSdkVersion
+
+        defaultConfig {
+            minSdk = this@run.minSdkVersion
+            targetSdk = this@run.targetSdkVersion
+            aarMetadata.minCompileSdk = this@run.minSdkVersion
         }
 
         packagingOptions {
@@ -69,7 +70,6 @@ private fun Project.setAndroidCommon(
             commonConfig.buildTypes.forEach { androidVariant ->
                 with(androidVariant) {
                     getByName(name) {
-                        name
                         isMinifyEnabled = minify
                         if (isAppExtension) isShrinkResources = shrinkResources
                         multiDexEnabled = multidex
