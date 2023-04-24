@@ -42,9 +42,7 @@ private fun Project.setAndroidCommon(
             resources.excludes.addAll(commonConfig.packagingExcludes)
         }
     }
-    lint {
-        abortOnError = commonConfig.lintOptions.abortOnError
-    }
+    lint.abortOnError = commonConfig.lintOptions.abortOnError
 }
 
 internal fun Project.setAndroidApp(
