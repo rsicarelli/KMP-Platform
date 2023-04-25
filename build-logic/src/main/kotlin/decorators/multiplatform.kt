@@ -2,16 +2,20 @@
 
 package decorators
 
+import ComposeConfig
 import MultiplatformDependencyHandler
 import MultiplatformLibraryConfig
-import ComposeConfig
 import org.gradle.api.Project
 import org.gradle.api.compose
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.the
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 
+@OptIn(ExperimentalWasmDsl::class)
 internal fun Project.setMultiplatformLibrary(
     multiplatformLibraryConfig: MultiplatformLibraryConfig,
     multiplatformDependencyHandler: MultiplatformDependencyHandler,
@@ -19,20 +23,27 @@ internal fun Project.setMultiplatformLibrary(
     extensions.configure<KotlinMultiplatformExtension> {
         android()
         jvm("desktop")
+        js(IR) {
+            browser()
+        }
+
+        wasm {
+            browser()
+        }
         iosX64 {
-//            binaries.framework {
-//                multiplatformLibraryConfig.iOSConfig.framework
-//            }
+            binaries.framework {
+                multiplatformLibraryConfig.iOSConfig.framework
+            }
         }
         iosArm64 {
-//            binaries.framework {
-//                multiplatformLibraryConfig.iOSConfig.framework
-//            }
+            binaries.framework {
+                multiplatformLibraryConfig.iOSConfig.framework
+            }
         }
         iosSimulatorArm64 {
-//            binaries.framework {
-//                multiplatformLibraryConfig.iOSConfig.framework
-//            }
+            binaries.framework {
+                multiplatformLibraryConfig.iOSConfig.framework
+            }
         }
 
         sourceSets {
@@ -41,6 +52,9 @@ internal fun Project.setMultiplatformLibrary(
                 dependsOn(commonMain)
                 dependencies(multiplatformDependencyHandler.iOS)
             }
+            val jsWasmMain: KotlinSourceSet = create("jsWasmMain") { dependsOn(commonMain) }
+            getByName("jsMain") { dependsOn(jsWasmMain) }
+            getByName("wasmMain") { dependsOn(jsWasmMain) }
             getByName("androidMain") { dependencies(multiplatformDependencyHandler.android) }
             getByName("desktopMain") { dependencies(multiplatformDependencyHandler.desktop) }
             getByName("iosX64Main") { dependsOn(iosMain) }
@@ -58,6 +72,8 @@ internal fun Project.setMultiplatformLibrary(
                     }
                 }
             }
+
+            rootProject.the<NodeJsRootExtension>().versions.webpack.version = "5.76.2"
         }
     }
 
