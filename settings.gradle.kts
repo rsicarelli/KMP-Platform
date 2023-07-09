@@ -9,8 +9,27 @@ enableFeaturePreview(STABLE_CONFIGURATION_CACHE.name)
 pluginManagement {
     repositories {
         gradlePluginPortal()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         google()
-        mavenCentral()
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/wasm/experimental")
+    }
+    plugins {
+        val kotlinVersion = extra["kotlin.version"] as String
+        val agpVersion = extra["agp.version"] as String
+        val composeVersion = extra["compose.wasm.version"] as String
+        val detekt = extra["detekt"] as String
+        val kmpPlatformVersion = extra["kmp.platform.version"] as String
+
+        kotlin("jvm").version(kotlinVersion)
+        kotlin("multiplatform").version(kotlinVersion)
+        kotlin("plugin.serialization").version(kotlinVersion)
+        kotlin("android").version(kotlinVersion)
+        id("com.android.base").version(agpVersion)
+        id("com.android.application").version(agpVersion)
+        id("com.android.library").version(agpVersion)
+        id("org.jetbrains.compose").version(composeVersion)
+        id("io.gitlab.arturbosch.detekt").version(detekt)
+        id("com.rsicarelli.kmplatform").version(kmpPlatformVersion)
     }
 
     includeBuild("build-logic")
@@ -31,7 +50,7 @@ dependencyResolutionManagement {
 
 private object ProjectDefaults {
 
-    const val name: String = "KMPlatform"
+    const val name: String = "KMP-Platform"
 
     val coreModules = sequenceOf(
         "copan", "logger", "threading"

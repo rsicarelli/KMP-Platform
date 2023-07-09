@@ -4,7 +4,6 @@ data class MultiplatformLibraryConfig(
     val androidLibraryConfig: AndroidLibraryConfig = AndroidLibraryConfig(),
     val iOSConfig: iOSLibraryConfig = iOSLibraryConfig(),
     val compilationConfig: CompilationConfig = CompilationConfig(),
-    val composeConfig: ComposeConfig? = null,
 )
 
 typealias CommonDependencies = KotlinDependencyHandler.() -> Unit

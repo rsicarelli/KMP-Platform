@@ -12,7 +12,8 @@ installComponentPublication(PlatformPublicationTarget.Multiplatform)
 installMultiplatformLibrary(
     multiplatformDependencyHandler = MultiplatformDependencyHandler(
         common = {
-            api(compose.dependencies.materialIconsExtended)
+            api(compose.dependencies.runtime)
+            api(compose.dependencies.foundation)
             api(compose.dependencies.material3)
         },
         android = {
@@ -25,3 +26,4 @@ installMultiplatformLibrary(
         },
     )
 )
+installComposeMultiplatform()
