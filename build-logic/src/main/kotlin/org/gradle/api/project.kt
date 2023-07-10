@@ -26,10 +26,8 @@ internal fun Project.checkIsRootProject() {
 }
 
 internal inline fun <reified T : Any> Project.withExtension(
-    crossinline block: T.() -> Unit,
-) {
-    extensions.findByType<T>()?.let { it.block() }
-}
+    block: T.() -> Unit,
+): T? = extensions.findByType<T>()?.apply(block)
 
 internal fun Project.androidCommonExtension(
     block: CommonExtension<*, *, *, *>.() -> Unit,

@@ -2,6 +2,7 @@ import decorators.PROJECT_DEFAULTS_KEY
 import decorators.requireDefaults
 import decorators.setAndroidApp
 import decorators.setComponentPublication
+import decorators.setComposeExperimental
 import decorators.setComposeMultiplatform
 import decorators.setDesktopApp
 import decorators.setDetekt
@@ -63,3 +64,5 @@ fun Project.installMultiplatformLibrary(
 )
 
 fun Project.installComposeMultiplatform() = setComposeMultiplatform()
+
+fun Project.installComposeExperimental() = setComposeExperimental()
