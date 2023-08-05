@@ -1,22 +1,21 @@
 [versions]
-androidBuildTools = "7.4.1"
-detekt = "1.22.0"
-jetbrainsCompose = "1.4.0"
+androidBuildTools = "7.4.2"
+detekt = "1.23.0"
+jetbrainsCompose = "1.4.1"
 jetbrainsComposeWasm = "1.4.0-dev-wasm08"
-jetpackComposeCompiler = "1.4.5"
-kotlin = "1.8.20"
-decompose = "2.0.0"
-coroutines = "1.7.2"
-jetbrainsKotlinxSerialization = "1.5.0"
-androidxCore = "1.9.0"
-androidxComposeActivity = "1.7.0"
+kotlin = "1.9.0"
+decompose = "2.0.1"
+coroutines = "1.7.3"
+jetbrainsKotlinxSerialization = "1.5.1"
+androidxCore = "1.10.1"
+androidxComposeActivity = "1.7.2"
 androidxTestCore = "1.5.0"
 okio = "3.3.0"
 kodein = "7.20.2"
 kermit = "2.0.0-RC4"
 sqlDelight = "1.5.5"
 loadTheImage = "1.0.8"
-coilCompose = "2.3.0"
+coilCompose = "2.4.0"
 accompanist = "0.30.1"
 kmplatform = "0.2-dev01"
 
@@ -74,4 +73,5 @@ arturbosch-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt"
 squareup-sqldelight = { id = "com.squareup.sqldelight", version.ref = "sqlDelight" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrainsCompose" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+android-build-tools = { id = "com.android.tools.build:gradle", version.ref = "androidBuildTools" }
 rsicarelli-kmplatform = { id = "com.rsicarelli.kmplatform", version.ref = "kmplatform" }

@@ -26,4 +26,4 @@ installMultiplatformLibrary(
         },
     )
 )
-installComposeMultiplatform()
+//installComposeMultiplatform()

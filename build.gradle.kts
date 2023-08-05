@@ -6,8 +6,9 @@ plugins {
     kotlin("android") apply false
     id("com.android.application") apply false
     id("com.android.library") apply false
-    id("org.jetbrains.compose") apply false
-    id("io.gitlab.arturbosch.detekt") apply false
+//    alias(libs.plugins.android.build.tools)
+    alias(libs.plugins.jetbrains.compose) apply false
+    alias(libs.plugins.arturbosch.detekt) apply false
     alias(libs.plugins.rsicarelli.kmplatform) apply false
 }
 
@@ -22,4 +23,4 @@ installDefaults(
     ),
 )
 installDetekt()
-installComposeExperimental()
+//installComposeExperimental()

@@ -8,6 +8,8 @@ data class iOSLibraryConfig(
     val cocoapodsConfig: CocoapodsConfig? = null,
     val targets: List<iOSTargets> = iOSTargets.values().toList(),
     val framework: Framework.() -> Unit = {},
+    val frameworkName: String = "KMP-Platform",
+    val isStatic: Boolean = true,
 ) : iOSConfig
 
 enum class iOSTargets {
